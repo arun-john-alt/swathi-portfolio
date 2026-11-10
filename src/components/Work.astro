@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import Frame from './Frame.astro';
+import ProjectCard from './ProjectCard.astro';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const placeholders = work.filter((w) => w.data.placeholder).length;
+const count = `${work.length} project${work.length === 1 ? '' : 's'}`;
+const meta =
+  placeholders === 0 ? count : placeholders === work.length ? `${count} · placeholders` : `${count} · ${placeholders} placeholder`;
+---
+
+<Frame id="work" name="Work" meta={meta} labelledby="work-title">
+  <div class="board__head">
+    <h2 id="work-title">Selected work</h2>
+    <p>Drag the handle on each project to compare the design file with the site that went live.</p>
+  </div>
+  <div class="projects">
+    {work.map((entry, i) => <ProjectCard entry={entry} index={i} />)}
+  </div>
+</Frame>

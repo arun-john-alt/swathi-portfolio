@@ -1,0 +1,237 @@
+---
+import site from '../data/site.json';
+
+interface Props {
+  base?: string; // '' on the home page, '/' on inner pages so anchors point home
+}
+const { base = '' } = Astro.props;
+const links = [
+  { href: `${base}#work`, label: 'Work' },
+  { href: `${base}#services`, label: 'Services' },
+  { href: `${base}#process`, label: 'Process' },
+  { href: `${base}#about`, label: 'About' },
+  { href: `${base}#contact`, label: 'Contact' },
+];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="wordmark" href={base || '#top'} aria-label={`${site.name}, back to top`}>
+      <span class="wordmark__mark" aria-hidden="true"></span>
+      <span>{site.name}</span>
+    </a>
+
+    <button
+      class="menu-btn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-menu-btn
+    >
+      <span class="menu-btn__text">Menu</span>
+      <span class="menu-btn__icon" aria-hidden="true"></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" aria-label="Main" data-menu>
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header__inner {
+    max-width: calc(var(--max) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  /* A tiny selected frame: the site's mark. */
+  .wordmark__mark {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--select);
+  }
+  .wordmark__mark::before,
+  .wordmark__mark::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    border: 1.5px solid var(--select);
+  }
+  .wordmark__mark::before {
+    top: -4px;
+    left: -4px;
+  }
+  .wordmark__mark::after {
+    bottom: -4px;
+    right: -4px;
+  }
+
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 4px 0 12px;
+    margin-right: -4px;
+    background: none;
+    border: 0;
+    font: 600 1rem/1 var(--sans);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .menu-btn__icon {
+    position: relative;
+    width: 18px;
+    height: 10px;
+  }
+  .menu-btn__icon::before,
+  .menu-btn__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: currentColor;
+    transition: transform 200ms var(--ease-out);
+  }
+  .menu-btn__icon::before {
+    top: 0;
+  }
+  .menu-btn__icon::after {
+    bottom: 0;
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__icon::before {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__icon::after {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  .site-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* Phones: the links live in a sheet under the header. Without JS they stay visible. */
+  :global(html:not(.js)) .menu-btn {
+    display: none;
+  }
+  :global(html:not(.js)) .site-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 16px;
+  }
+
+  @media (max-width: 799px) {
+    :global(.js) .site-nav {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      background: var(--board);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.25);
+      padding: 8px var(--gutter) 16px;
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition:
+        opacity 180ms var(--ease-out),
+        transform 180ms var(--ease-out),
+        visibility 0s linear 180ms;
+    }
+    :global(.js) .site-nav.is-open {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 200ms var(--ease-out),
+        transform 200ms var(--ease-out);
+    }
+    :global(.js) .site-nav a {
+      min-height: 56px;
+      font-size: 1.375rem;
+      letter-spacing: -0.02em;
+      border-bottom: 1px solid var(--line);
+    }
+    :global(.js) .site-nav li:last-child a {
+      border-bottom: 0;
+    }
+    :global(html:not(.js)) .site-header__inner {
+      height: auto;
+      flex-wrap: wrap;
+      padding-block: 6px;
+    }
+  }
+
+  @media (max-width: 799px) and (prefers-reduced-motion: reduce) {
+    :global(.js) .site-nav,
+    :global(.js) .site-nav.is-open {
+      transform: none;
+    }
+  }
+
+  @media (min-width: 800px) {
+    .menu-btn {
+      display: none;
+    }
+    .site-nav ul {
+      display: flex;
+      gap: 4px;
+    }
+    .site-nav a {
+      padding: 0 12px;
+      border-radius: 4px;
+      transition: background-color 160ms var(--ease-out);
+    }
+  }
+
+  @media (min-width: 800px) and (hover: hover) {
+    .site-nav a:hover {
+      background: var(--select-soft);
+    }
+  }
+</style>

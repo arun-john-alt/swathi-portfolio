@@ -1,0 +1,55 @@
+{
+  "draft": true,
+  "name": "Swathi",
+  "role": "Web designer",
+  "eyebrow": "Web designer · Shopify & static sites",
+  "headline": "I turn designs into Shopify stores and static websites.",
+  "intro": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "seo": {
+    "title": "Swathi · Web designer",
+    "description": "Swathi turns designs into Shopify stores and static websites. Placeholder description: replace before launch."
+  },
+  "services": [
+    {
+      "name": "Shopify stores",
+      "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
+      "items": ["Lorem ipsum dolor sit", "Consectetur adipiscing elit", "Sed do eiusmod tempor", "Ut labore et dolore magna"]
+    },
+    {
+      "name": "Static websites",
+      "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud.",
+      "items": ["Lorem ipsum dolor sit", "Quis nostrud exercitation", "Ullamco laboris nisi", "Duis aute irure dolor"]
+    },
+    {
+      "name": "[Third service, to confirm]",
+      "summary": "",
+      "items": []
+    }
+  ],
+  "process": [
+    { "name": "Design file", "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do." },
+    { "name": "Build", "text": "Eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim." },
+    { "name": "Phone check", "text": "Ad minim veniam, quis nostrud exercitation ullamco laboris nisi." },
+    { "name": "Launch", "text": "Duis aute irure dolor in reprehenderit in voluptate velit esse." }
+  ],
+  "about": {
+    "heading": "Hi, I'm Swathi.",
+    "paragraphs": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident."
+    ],
+    "tools": ["Shopify", "[Tool]", "[Tool]", "[Tool]", "[Tool]"]
+  },
+  "contact": {
+    "heading": "Have a design that needs building?",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
+    "whatsapp": "",
+    "whatsappMessage": "Hi Swathi, I saw your portfolio and have a design I'd like built.",
+    "email": "",
+    "links": [
+      { "label": "Instagram", "url": "" },
+      { "label": "LinkedIn", "url": "" },
+      { "label": "Behance", "url": "" }
+    ]
+  }
+}

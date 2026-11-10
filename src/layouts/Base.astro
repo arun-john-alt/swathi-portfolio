@@ -1,0 +1,55 @@
+---
+import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import site from '../data/site.json';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  headerBase?: string;
+}
+const { title = site.seo.title, description = site.seo.description, headerBase = '' } = Astro.props;
+// Link previews (WhatsApp, Instagram DMs) need a full address, so the image is added once
+// `site` is set in astro.config.mjs.
+const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* While site.json says "draft": true, search engines are asked not to list the placeholder site. */}
+    {site.draft && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header base={headerBase} />
+    <main id="main" class="page">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

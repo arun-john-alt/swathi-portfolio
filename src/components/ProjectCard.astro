@@ -1,0 +1,112 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Compare from './Compare.astro';
+import Link from './Link.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  index: number;
+}
+const { entry, index } = Astro.props;
+const p = entry.data;
+const num = String(index + 1).padStart(2, '0');
+---
+
+<article class="project">
+  <Compare title={p.title} type={p.type} design={p.design} liveShot={p.liveShot} folder={entry.id} />
+
+  <div class="project__body">
+    <p class="project__meta mono">
+      <span class="project__num">{num}</span>
+      <span>{p.type}</span>
+      <span>{p.year}</span>
+      {p.placeholder && <span class="ph-tag">Placeholder</span>}
+    </p>
+    <h3>{p.title}</h3>
+    <p class="project__summary">{p.summary}</p>
+    <dl class="project__spec mono">
+      <div><dt>Role</dt><dd>{p.role}</dd></div>
+    </dl>
+    <div class="project__links">
+      <a class="text-link" href={`/work/${entry.id}/`}>
+        <span class="text-link__label">Case study</span><span aria-hidden="true">→</span>
+      </a>
+      <Link href={p.live} label="Live site" arrow="↗" external />
+    </div>
+  </div>
+</article>
+
+<style>
+  .project {
+    display: grid;
+    gap: 20px;
+    padding-block: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .project:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .project:last-child {
+    padding-bottom: 0;
+  }
+
+  .project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    color: var(--muted);
+  }
+  .project__num {
+    color: var(--ink);
+  }
+
+  .project h3 {
+    margin-top: 10px;
+    font-size: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
+    font-weight: 700;
+  }
+
+  .project__summary {
+    margin-top: 10px;
+    color: var(--ink-2);
+    max-width: 48ch;
+  }
+
+  .project__spec {
+    margin: 18px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .project__spec div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .project__spec dt {
+    color: var(--muted);
+  }
+  .project__spec dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .project__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    margin-top: 10px;
+  }
+
+  /* Desktop: the text starts level with the top of the image, like a spec sheet beside a frame. */
+  @media (min-width: 1024px) {
+    .project {
+      grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+      gap: 48px;
+      padding-block: 48px;
+      align-items: start;
+    }
+  }
+</style>

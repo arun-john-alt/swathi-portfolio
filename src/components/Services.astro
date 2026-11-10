@@ -1,0 +1,100 @@
+---
+import site from '../data/site.json';
+import Frame from './Frame.astro';
+import { isPlaceholderText, placeholderLabel } from '../lib/placeholder';
+---
+
+<Frame id="services" name="Services" labelledby="services-title">
+  <div class="board__head">
+    <h2 id="services-title">What I build</h2>
+  </div>
+
+  <div class="services">
+    {
+      site.services.map((s) =>
+        isPlaceholderText(s.name) ? (
+          <div class="service service--ph">
+            <span class="ph-tag">Placeholder</span>
+            <p>{placeholderLabel(s.name)}</p>
+          </div>
+        ) : (
+          <article class="service">
+            <h3>{s.name}</h3>
+            <p class="service__summary">{s.summary}</p>
+            {s.items.length > 0 && (
+              <ul class="service__list">
+                {s.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ),
+      )
+    }
+  </div>
+</Frame>
+
+<style>
+  .services {
+    display: grid;
+    gap: 40px;
+  }
+
+  .service {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+  }
+
+  .service h3 {
+    margin-top: 4px;
+    font-size: clamp(1.625rem, 1.3rem + 1.4vw, 2.5rem);
+    font-weight: 700;
+  }
+
+  .service__summary {
+    margin-top: 12px;
+    color: var(--ink-2);
+    max-width: 44ch;
+  }
+
+  .service__list {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .service__list li {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .service__list li::before {
+    content: '+';
+    font-family: var(--mono);
+    color: var(--muted);
+  }
+
+  .service--ph {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    padding: 20px;
+    border: 1px dashed var(--line-strong);
+    color: var(--muted);
+  }
+
+  @media (min-width: 800px) {
+    .services {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(32px, 5vw, 72px);
+      row-gap: 48px;
+    }
+    .service--ph {
+      grid-column: 1 / -1;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+    }
+  }
+</style>

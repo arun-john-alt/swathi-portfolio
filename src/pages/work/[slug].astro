@@ -1,0 +1,182 @@
+---
+// A case-study page for each project, made from the same file as its card.
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import site from '../../data/site.json';
+import Base from '../../layouts/Base.astro';
+import Frame from '../../components/Frame.astro';
+import Compare from '../../components/Compare.astro';
+import Link from '../../components/Link.astro';
+
+export async function getStaticPaths() {
+  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return work.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: work[(i + 1) % work.length] },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  next: CollectionEntry<'work'>;
+}
+const { entry, next } = Astro.props;
+const p = entry.data;
+const { Content } = await render(entry);
+---
+
+<Base title={`${p.title} · ${site.name}`} description={p.summary} headerBase="/">
+  <Frame id="top" name={`Work / ${p.title}`} labelledby="case-title" reveal={false}>
+    <a class="back text-link" href="/#work"><span aria-hidden="true">←</span><span class="text-link__label">All work</span></a>
+
+    <header class="case-head">
+      <p class="case-meta mono">
+        <span>{p.type}</span><span>{p.year}</span>
+        {p.placeholder && <span class="ph-tag">Placeholder</span>}
+      </p>
+      <h1 id="case-title">{p.title}</h1>
+      <p class="case-summary">{p.summary}</p>
+    </header>
+
+    <Compare
+      title={p.title}
+      type={p.type}
+      design={p.design}
+      liveShot={p.liveShot}
+      folder={entry.id}
+      eager
+      sizes="(min-width: 1440px) 1300px, 100vw"
+    />
+
+    <div class="case-body">
+      <dl class="case-spec mono">
+        <div><dt>Role</dt><dd>{p.role}</dd></div>
+        <div><dt>Platform</dt><dd>{p.type}</dd></div>
+        <div><dt>Year</dt><dd>{p.year}</dd></div>
+        <div>
+          <dt>Live site</dt>
+          <dd><Link href={p.live} label="Visit" arrow="↗" external /></dd>
+        </div>
+      </dl>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </Frame>
+
+  <nav class="frame next" aria-label="Next project">
+    <div class="frame__label mono" aria-hidden="true">
+      <span class="frame__name"><span class="frame__icon">#</span>Next</span>
+    </div>
+    <a class="next__link" href={`/work/${next.id}/`}>
+      <span class="mono">Next project</span>
+      <span class="next__title">{next.data.title} <span aria-hidden="true">→</span></span>
+    </a>
+  </nav>
+</Base>
+
+<style>
+  .back {
+    margin: -10px 0 16px;
+  }
+
+  .case-head {
+    margin-bottom: 28px;
+  }
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    color: var(--muted);
+  }
+  .case-head h1 {
+    margin-top: 12px;
+    font-size: clamp(2.5rem, 1.6rem + 5vw, 5.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .case-summary {
+    margin-top: 14px;
+    color: var(--ink-2);
+    max-width: 52ch;
+    font-size: 1.125rem;
+  }
+
+  .case-body {
+    display: grid;
+    gap: 32px;
+    margin-top: 36px;
+  }
+
+  .case-spec {
+    margin: 0;
+    border-top: 1px solid var(--line);
+    align-self: start;
+  }
+  .case-spec div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
+    border-bottom: 1px solid var(--line);
+  }
+  .case-spec dt {
+    color: var(--muted);
+  }
+  .case-spec dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .prose {
+    max-width: 64ch;
+  }
+  .prose :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 32px 0 10px;
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose :global(p),
+  .prose :global(li) {
+    color: var(--ink-2);
+  }
+  .prose :global(ul) {
+    padding-left: 1.2em;
+  }
+  .prose :global(p + p) {
+    margin-top: 12px;
+  }
+
+  .next__link {
+    display: grid;
+    gap: 6px;
+    padding: var(--pad);
+    background: var(--board);
+    text-decoration: none;
+    color: var(--muted);
+  }
+  .next__title {
+    color: var(--ink);
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  @media (hover: hover) {
+    .next__link:hover .next__title {
+      color: var(--select);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .case-body {
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 72px;
+      margin-top: 56px;
+    }
+  }
+</style>

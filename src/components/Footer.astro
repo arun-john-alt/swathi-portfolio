@@ -1,0 +1,40 @@
+---
+import site from '../data/site.json';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner mono">
+    <span>{site.name} · {site.role} · © {year}</span>
+    <a href="#top" class="to-top"><span class="to-top__label">Back to top</span><span aria-hidden="true">↑</span></a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 8px var(--gutter) 20px;
+  }
+  .site-footer__inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 16px;
+    color: var(--muted);
+  }
+  .to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .to-top__label {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+</style>

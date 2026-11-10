@@ -1,0 +1,1 @@
+﻿Drop one portrait photo of Swathi in this folder (jpg, png or webp). It replaces the striped placeholder automatically.

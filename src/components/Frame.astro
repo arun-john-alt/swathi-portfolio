@@ -1,0 +1,23 @@
+---
+// A section drawn as an artboard: its name sits above it on the grey canvas, like a frame in a design file.
+interface Props {
+  id?: string;
+  name: string;
+  meta?: string;
+  labelledby?: string;
+  class?: string;
+  reveal?: boolean; // fade in on scroll; off for the first screen
+}
+const { id, name, meta, labelledby, class: className, reveal = true } = Astro.props;
+---
+
+<section class:list={['frame', className]} id={id} aria-labelledby={labelledby}>
+  <div class="frame__label mono" aria-hidden="true">
+    <span class="frame__name"><span class="frame__icon">#</span>{name}</span>
+    {meta && <span class="frame__meta">{meta}</span>}
+    <slot name="meta" />
+  </div>
+  <div class="board" data-reveal={reveal ? '' : undefined}>
+    <slot />
+  </div>
+</section>

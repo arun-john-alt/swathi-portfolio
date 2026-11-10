@@ -1,0 +1,307 @@
+---
+import site from '../data/site.json';
+import Frame from './Frame.astro';
+---
+
+<Frame id="top" name="Hero" labelledby="hero-title" reveal={false} class="hero-frame">
+  <span slot="meta" class="frame__meta bp"></span>
+
+  <div class="hero">
+    <div class="hero__main">
+      <p class="hero__eyebrow mono">{site.eyebrow}</p>
+
+      <!-- The headline is drawn as a selected layer: outline, corner handles and its live size. -->
+      <div class="sel" data-sel>
+        <h1 id="hero-title">{site.headline}</h1>
+        <span class="sel__box" aria-hidden="true">
+          <i class="sel__h sel__h--tl"></i><i class="sel__h sel__h--tr"></i>
+          <i class="sel__h sel__h--bl"></i><i class="sel__h sel__h--br"></i>
+        </span>
+        <span class="sel__dims mono" aria-hidden="true" data-sel-dims>Fill × Hug</span>
+        <!-- A spacing measurement, as in a developer hand-off. The 48 is the real gap below. -->
+        <span class="redline" aria-hidden="true"><span class="redline__val mono">48</span></span>
+      </div>
+
+      <p class="hero__intro">{site.intro}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#work">See the work</a>
+        <a class="btn btn--ghost" href="#contact">Contact</a>
+      </div>
+    </div>
+
+    <!-- Wide screens only: an inspector panel that reads the headline's real styles. -->
+    <aside class="inspect mono" aria-hidden="true" data-inspect>
+      <p class="inspect__title"><span>Inspect</span><span class="inspect__tag">h1</span></p>
+      <dl>
+        <div><dt>W × H</dt><dd data-i="box">—</dd></div>
+        <div><dt>Font</dt><dd>Schibsted Grotesk</dd></div>
+        <div><dt>Weight</dt><dd data-i="weight">700</dd></div>
+        <div><dt>Size / line</dt><dd data-i="size">—</dd></div>
+        <div><dt>Tracking</dt><dd data-i="tracking">−3%</dd></div>
+        <div><dt>Fill</dt><dd><i class="swatch"></i>#141414</dd></div>
+      </dl>
+      <p class="inspect__foot">Resize the window: the numbers follow.</p>
+    </aside>
+  </div>
+</Frame>
+
+<style>
+  .bp::after {
+    content: 'Phone';
+  }
+  @media (min-width: 600px) {
+    .bp::after {
+      content: 'Tablet';
+    }
+  }
+  @media (min-width: 1024px) {
+    .bp::after {
+      content: 'Desktop';
+    }
+  }
+
+  .hero {
+    /* The outline sits on the headline's own box (as a design tool draws a text layer),
+       so the size chip and the outline always agree. */
+    --sel-out: 0px;
+    --gap: 48px; /* gap from the outline to the intro; the redline shows this number */
+    display: grid;
+    gap: 40px;
+  }
+
+  .hero__eyebrow {
+    color: var(--ink-2);
+    margin-bottom: 26px;
+  }
+
+  .sel {
+    position: relative;
+  }
+
+  /* Phones: sized so the headline sets in four lines (about 40px at 360, 44px at 390, 47px at 414). */
+  .sel h1 {
+    font-size: min(calc(13.5vw - 0.55rem), 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  @media (min-width: 600px) {
+    .sel h1 {
+      font-size: clamp(2.5rem, 1.55rem + 5.4vw, 6rem);
+      max-width: 13ch;
+    }
+  }
+
+  /* --hug is the widest line of the headline, measured by the script, so the outline hugs the text. */
+  .sel__box {
+    position: absolute;
+    inset: calc(-1 * var(--sel-out));
+    right: auto;
+    width: calc(var(--hug, 100%) + 2 * var(--sel-out));
+    border: 1.5px solid var(--select);
+    pointer-events: none;
+  }
+
+  .sel__h {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    background: #fff;
+    border: 1.5px solid var(--select);
+  }
+  .sel__h--tl {
+    top: -5px;
+    left: -5px;
+  }
+  .sel__h--tr {
+    top: -5px;
+    right: -5px;
+  }
+  .sel__h--bl {
+    bottom: -5px;
+    left: -5px;
+  }
+  .sel__h--br {
+    bottom: -5px;
+    right: -5px;
+  }
+
+  .sel__dims {
+    position: absolute;
+    left: calc(var(--hug, 100%) / 2);
+    top: calc(100% + var(--sel-out) + 8px);
+    translate: -50% 0;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--select);
+    color: #fff;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .redline {
+    position: absolute;
+    left: 14%;
+    top: calc(100% + var(--sel-out));
+    height: var(--gap);
+    width: 1px;
+    background: var(--redline);
+  }
+  .redline::before,
+  .redline::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    width: 9px;
+    height: 1px;
+    background: var(--redline);
+  }
+  .redline::before {
+    top: 0;
+  }
+  .redline::after {
+    bottom: 0;
+  }
+  .redline__val {
+    position: absolute;
+    top: 50%;
+    left: 6px;
+    translate: 0 -50%;
+    padding: 0 4px;
+    border-radius: 2px;
+    background: var(--redline);
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .hero__intro {
+    margin-top: calc(var(--sel-out) + var(--gap));
+    max-width: 46ch;
+    font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+    color: var(--ink-2);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .inspect {
+    display: none;
+  }
+
+  /* The inspector needs room beside the headline, so it appears on wide screens only. */
+  @media (min-width: 1200px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr) 248px;
+      align-items: start;
+      gap: 56px;
+      padding-block: clamp(24px, 4vw, 56px);
+    }
+
+    /* Lines up with the top of the selected headline, like a design tool's right-hand panel. */
+    .inspect {
+      display: block;
+      margin-top: 44px;
+      border: 1px solid var(--line);
+      background: #fafaf9;
+      font-size: 0.75rem;
+    }
+    .inspect__title {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 500;
+    }
+    .inspect__tag {
+      color: var(--select);
+    }
+    .inspect dl {
+      margin: 0;
+      padding: 6px 12px;
+    }
+    .inspect dl div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 5px 0;
+    }
+    .inspect dt {
+      color: var(--muted);
+    }
+    .inspect dd {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .swatch {
+      width: 10px;
+      height: 10px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+    .inspect__foot {
+      padding: 10px 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+  }
+
+  /* The selection draws itself once on load. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .sel__box {
+      animation: sel-in 280ms var(--ease-out) 150ms both;
+    }
+    :global(.js) .sel__h {
+      animation: handle-in 220ms var(--ease-out) both;
+    }
+    :global(.js) .sel__h--tl {
+      animation-delay: 330ms;
+    }
+    :global(.js) .sel__h--tr {
+      animation-delay: 370ms;
+    }
+    :global(.js) .sel__h--br {
+      animation-delay: 410ms;
+    }
+    :global(.js) .sel__h--bl {
+      animation-delay: 450ms;
+    }
+    :global(.js) .sel__dims {
+      animation: fade-in 240ms var(--ease-out) 480ms both;
+    }
+    :global(.js) .redline {
+      transform-origin: top;
+      animation: draw-down 320ms var(--ease-out) 560ms both;
+    }
+  }
+
+  @keyframes sel-in {
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+  }
+  @keyframes handle-in {
+    from {
+      transform: scale(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes draw-down {
+    from {
+      transform: scaleY(0);
+    }
+  }
+</style>

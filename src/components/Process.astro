@@ -1,0 +1,112 @@
+---
+import site from '../data/site.json';
+import Frame from './Frame.astro';
+---
+
+<Frame id="process" name="Process" meta={`${site.process.length} steps`} labelledby="process-title">
+  <div class="board__head">
+    <h2 id="process-title">How a project runs</h2>
+  </div>
+
+  <ol class="steps">
+    {
+      site.process.map((step, i) => (
+        <li class="step">
+          <span class="step__num mono">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{step.name}</h3>
+          <p>{step.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Frame>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  /* Phones: a vertical rail joins the steps. */
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 16px;
+    padding-bottom: 28px;
+  }
+  .step:last-child {
+    padding-bottom: 0;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: var(--line);
+  }
+  .step:last-child::before {
+    display: none;
+  }
+
+  .step__num {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--ink);
+    background: var(--board);
+    font-weight: 500;
+  }
+  .step:first-child .step__num {
+    border-color: var(--select);
+    color: var(--select);
+  }
+
+  .step h3 {
+    align-self: center;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+  .step p {
+    margin-top: 6px;
+    color: var(--ink-2);
+  }
+
+  /* Wider screens: the same steps in a row, joined by a line. */
+  @media (min-width: 800px) {
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 28px;
+    }
+    .step {
+      grid-template-columns: 1fr;
+      align-content: start; /* keep titles level when one step's text runs longer */
+      padding-bottom: 0;
+    }
+    .step::before {
+      left: 48px;
+      right: -28px;
+      top: 19px;
+      bottom: auto;
+      width: auto;
+      height: 2px;
+    }
+    .step__num {
+      grid-row: auto;
+    }
+    .step h3 {
+      margin-top: 18px;
+      min-height: 0;
+    }
+  }
+</style>

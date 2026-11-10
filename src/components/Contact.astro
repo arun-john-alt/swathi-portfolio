@@ -1,0 +1,148 @@
+---
+import site from '../data/site.json';
+import Frame from './Frame.astro';
+import { whatsappUrl } from '../lib/placeholder';
+
+const c = site.contact;
+const channels = [
+  {
+    label: 'WhatsApp',
+    value: c.whatsapp,
+    href: whatsappUrl(c.whatsapp, c.whatsappMessage),
+    missing: 'Number to add',
+    external: true,
+  },
+  {
+    label: 'Email',
+    value: c.email,
+    href: c.email ? `mailto:${c.email}` : '',
+    missing: 'Address to add',
+    external: false,
+  },
+  ...c.links.map((l) => ({
+    label: l.label,
+    value: l.url ? l.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : '',
+    href: l.url,
+    missing: 'Link to add',
+    external: true,
+  })),
+];
+---
+
+<Frame id="contact" name="Contact" labelledby="contact-title">
+  <div class="contact">
+    <div class="contact__intro">
+      <h2 id="contact-title">{c.heading}</h2>
+      <p>{c.text}</p>
+    </div>
+
+    <ul class="channels">
+      {
+        channels.map((ch) => (
+          <li>
+            {ch.href ? (
+              <a
+                class="channel"
+                href={ch.href}
+                target={ch.external ? '_blank' : undefined}
+                rel={ch.external ? 'noopener' : undefined}
+              >
+                <span class="channel__label mono">{ch.label}</span>
+                <span class="channel__value">{ch.value}</span>
+                <span class="channel__arrow" aria-hidden="true">↗</span>
+              </a>
+            ) : (
+              <span class="channel channel--ph" title="Placeholder: add it in src/data/site.json">
+                <span class="channel__label mono">{ch.label}</span>
+                <span class="channel__value">{ch.missing}</span>
+                <span class="ph-tag">placeholder</span>
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Frame>
+
+<style>
+  .contact {
+    display: grid;
+    gap: 32px;
+  }
+
+  .contact__intro h2 {
+    font-size: clamp(2.25rem, 1.5rem + 4vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    max-width: 14ch;
+  }
+  .contact__intro p {
+    margin-top: 16px;
+    color: var(--ink-2);
+    max-width: 44ch;
+  }
+
+  .channels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--ink);
+  }
+
+  .channel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label end'
+      'value end';
+    align-items: center;
+    column-gap: 16px;
+    min-height: 72px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .channel__label {
+    grid-area: label;
+    color: var(--muted);
+  }
+  .channel__value {
+    grid-area: value;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .channel__arrow,
+  .channel .ph-tag {
+    grid-area: end;
+  }
+  .channel__arrow {
+    font-size: 1.25rem;
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .channel--ph .channel__value {
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  @media (hover: hover) {
+    a.channel:hover .channel__value {
+      color: var(--select);
+    }
+    a.channel:hover .channel__arrow {
+      transform: translate(2px, -2px);
+      color: var(--select);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>

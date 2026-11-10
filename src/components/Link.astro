@@ -1,0 +1,26 @@
+---
+// A link that falls back to a dashed placeholder (not clickable) while its address is empty.
+// Only the label is underlined, so the arrow doesn't break the line.
+interface Props {
+  href: string;
+  label: string;
+  arrow?: string;
+  external?: boolean;
+  placeholderNote?: string;
+}
+const { href, label, arrow = '', external = false, placeholderNote = 'link to add' } = Astro.props;
+---
+
+{
+  href ? (
+    <a class="text-link" href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>
+      <span class="text-link__label">{label}</span>
+      {arrow && <span aria-hidden="true">{arrow}</span>}
+    </a>
+  ) : (
+    <span class="ph-link" title="Placeholder: add the address in src/data/site.json or the project file">
+      {label}
+      <span class="ph-tag">{placeholderNote}</span>
+    </span>
+  )
+}
