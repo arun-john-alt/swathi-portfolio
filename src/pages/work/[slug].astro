@@ -1,15 +1,19 @@
 ---
-// A case-study page for each project, made from the same file as its card.
+// A case-study page for each project that has a write-up (text below the --- lines in its index.md).
+// Projects without one just link to their live site from the home page.
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import site from '../../data/site.json';
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import Frame from '../../components/Frame.astro';
-import Compare from '../../components/Compare.astro';
+import ProjectVisual from '../../components/ProjectVisual.astro';
 import Link from '../../components/Link.astro';
 
 export async function getStaticPaths() {
-  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  const work = (await getCollection('work'))
+    .filter((e) => e.body?.trim())
+    .sort((a, b) => a.data.order - b.data.order);
   return work.map((entry, i) => ({
     params: { slug: entry.id },
     props: { entry, next: work[(i + 1) % work.length] },
@@ -25,34 +29,26 @@ const p = entry.data;
 const { Content } = await render(entry);
 ---
 
-<Base title={`${p.title} · ${site.name}`} description={p.summary} headerBase="/">
+<Base title={`${p.title} · ${site.name}`} description={p.summary} headerBase={url('/')}>
   <Frame id="top" name={`Work / ${p.title}`} labelledby="case-title" reveal={false}>
-    <a class="back text-link" href="/#work"><span aria-hidden="true">←</span><span class="text-link__label">All work</span></a>
+    <a class="back text-link" href={url('/#work')}><span aria-hidden="true">←</span><span class="text-link__label">All work</span></a>
 
     <header class="case-head">
       <p class="case-meta mono">
-        <span>{p.type}</span><span>{p.year}</span>
+        <span>{p.type}</span>{p.year && <span>{p.year}</span>}
         {p.placeholder && <span class="ph-tag">Placeholder</span>}
       </p>
       <h1 id="case-title">{p.title}</h1>
       <p class="case-summary">{p.summary}</p>
     </header>
 
-    <Compare
-      title={p.title}
-      type={p.type}
-      design={p.design}
-      liveShot={p.liveShot}
-      folder={entry.id}
-      eager
-      sizes="(min-width: 1440px) 1300px, 100vw"
-    />
+    <ProjectVisual entry={entry} eager sizes="(min-width: 1440px) 1300px, 100vw" />
 
     <div class="case-body">
       <dl class="case-spec mono">
-        <div><dt>Role</dt><dd>{p.role}</dd></div>
+        {p.role && <div><dt>Role</dt><dd>{p.role}</dd></div>}
         <div><dt>Platform</dt><dd>{p.type}</dd></div>
-        <div><dt>Year</dt><dd>{p.year}</dd></div>
+        {p.year && <div><dt>Year</dt><dd>{p.year}</dd></div>}
         <div>
           <dt>Live site</dt>
           <dd><Link href={p.live} label="Visit" arrow="↗" external /></dd>
@@ -68,7 +64,7 @@ const { Content } = await render(entry);
     <div class="frame__label mono" aria-hidden="true">
       <span class="frame__name"><span class="frame__icon">#</span>Next</span>
     </div>
-    <a class="next__link" href={`/work/${next.id}/`}>
+    <a class="next__link" href={url(`/work/${next.id}/`)}>
       <span class="mono">Next project</span>
       <span class="next__title">{next.data.title} <span aria-hidden="true">→</span></span>
     </a>

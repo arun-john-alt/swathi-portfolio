@@ -1,0 +1,34 @@
+---
+// Chooses how a project is pictured:
+// - design.png + live.png → the design/live slider
+// - desktop.png + phone.png (screenshots of the live site) → desktop and phone together
+// - nothing yet → the slider with placeholder wireframes
+import type { CollectionEntry } from 'astro:content';
+import Compare from './Compare.astro';
+import Showcase from './Showcase.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  eager?: boolean;
+  sizes?: string;
+}
+const { entry, eager = false, sizes } = Astro.props;
+const p = entry.data;
+const useShowcase = !(p.design && p.liveShot) && p.desktop && p.phone;
+---
+
+{
+  useShowcase ? (
+    <Showcase title={p.title} desktop={p.desktop!} phone={p.phone!} eager={eager} />
+  ) : (
+    <Compare
+      title={p.title}
+      type={p.type}
+      design={p.design}
+      liveShot={p.liveShot}
+      folder={entry.id}
+      eager={eager}
+      sizes={sizes}
+    />
+  )
+}

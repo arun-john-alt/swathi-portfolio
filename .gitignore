@@ -4,3 +4,6 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Original photos dropped in the folder: the one used on the site lives in src/assets/about/
+/WhatsApp Image*

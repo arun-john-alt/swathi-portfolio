@@ -2,9 +2,11 @@
 
 A small, fast portfolio site for Swathi, who turns designs into Shopify stores and static websites.
 
-The idea ("Frame to live"): the page looks like a design tool's canvas. Each section is a white artboard with its name above it, the headline is drawn as a selected layer, and every project shows its design file and its live site in one box with a handle to drag between them.
+**Live:** https://arun-john-alt.github.io/swathi-portfolio/ (GitHub Pages; every push to `main` rebuilds it).
 
-Right now everything is **placeholder content**: lorem ipsum text, striped image boxes and dashed "to add" links. Nothing on the site is a real client, number or quote yet.
+The idea ("Frame to live"): the page looks like a design tool's canvas. Each section is a white artboard with its name above it, and the headline is drawn as a selected layer. Beside it, a phone screen plays a quick reel of the concept sites made in the Client Extractor workflow. Her live projects are shown on a desktop screen and a phone.
+
+**Still placeholder:** the intro line, services, process steps, About text, tools, WhatsApp number and email (lorem ipsum or dashed "to add" markers). Until Swathi's own words are in, `"draft": true` in `src/data/site.json` asks search engines not to list the site.
 
 ## Run it on this laptop
 
@@ -14,9 +16,13 @@ The laptop's own Node is too old, so use the portable Node 22 that sits in the C
 $env:PATH = "C:\Users\aj\Downloads\Clients extractor\data\tools\node-v22.23.4-win-x64;" + $env:PATH
 cd C:\Users\aj\Downloads\swathi-portfolio
 npm install        # first time only
-npm run dev        # opens on http://localhost:4321 and refreshes as you edit
+npm run dev        # opens on http://localhost:4321/swathi-portfolio/ and refreshes as you edit
 npm run build      # makes the finished site in dist/
 ```
+
+## Publishing a change
+
+Commit and push to `main`. The GitHub Action in `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages in about two minutes. Watch it under the repository's **Actions** tab.
 
 ## Replacing the placeholders
 
@@ -31,54 +37,55 @@ Most of the words live in **one file: `src/data/site.json`**. Open it in any tex
 | About text and tools | `site.json` → `about` | Tools in `[square brackets]` show as dashed "tool to add" slots. Replace them with real tool names or delete them. |
 | WhatsApp | `site.json` → `contact.whatsapp` | The number with country code, e.g. `+91 98xxx xxxxx`. The button then opens WhatsApp with the `whatsappMessage` already typed. |
 | Email | `site.json` → `contact.email` | The address. |
-| Instagram, LinkedIn, Behance | `site.json` → `contact.links` | Paste each full link (`https://…`). Delete a line to remove it, or copy a line to add another. |
-| Her photo | `src/assets/about/` | Drop **one** photo in this folder (jpg, png or webp, portrait, about 1200 × 1500 or larger). It is used automatically and shrunk for phones. |
+| Instagram and other links | `site.json` → `contact.links` | Paste each full link (`https://…`). Copy a line to add LinkedIn, Behance and so on. |
+| Her photo | `src/assets/about/swathi.jpg` | Replace the file (keep one photo in the folder: portrait, 1000 px wide or more). It is shrunk for phones automatically. |
 
 **Rule of thumb:** an empty value (`""`) or text in `[square brackets]` shows as a dashed placeholder. Fill it in and the dashes disappear.
 
-### Projects
+## Projects
 
-Each project is one folder in `src/content/work/`, for example `src/content/work/project-one/`. The folder name becomes the page address (`/work/project-one/`), so rename it to something like `kanmani-sarees`.
+Each project is one folder in `src/content/work/`, for example `src/content/work/kattam/`. Inside:
 
-Inside each folder:
-
-- `index.md`: the details at the top between the `---` lines, and the case-study write-up below them.
-- `design.png`: a screenshot of the design file (Figma etc.).
-- `live.png`: a screenshot of the finished live site at the same size and position, so the slider lines up.
-
-Then edit the top of `index.md`:
+- `index.md`: the details at the top, between the `---` lines.
+- `desktop.jpg` and `phone.jpg`: screenshots of the live site at 1440 × 900 and 390 × 844 (a phone screenshot at 2× is ideal). The card shows the desktop screen with the phone in front of it.
 
 ```yaml
-title: Kanmani Sarees          # project name
+title: Kattam                  # project name
 order: 1                       # position on the page (1 = first)
-type: Shopify store            # or "Static website"
-year: "2026"
-role: Design to Shopify build  # what she did
-summary: One or two sentences for the card.
-live: "https://example.com"    # the live site; leave "" to show a placeholder
-design: ./design.png           # remove the # at the start of these two lines
-liveShot: ./live.png           #   once the images are in the folder
-placeholder: false             # false removes the "Placeholder" tag
+type: Shopify store            # what it is: "Shopify store", "WordPress landing page", ...
+summary: One sentence for the card.
+live: "https://www.kattam.in/" # the live site
+desktop: ./desktop.jpg
+phone: ./phone.jpg
+# year: "2026"                 # optional
+# role: Design to Shopify build # optional
 ```
 
-- **Add a project:** copy a whole folder, rename it, change `order`.
+- **Add a project:** copy a folder, rename it, swap the screenshots, change `order`.
 - **Remove a project:** delete its folder.
-- **Screenshots:** any size works, the site makes small copies for phones. 1600 × 1000 (or larger, same shape) suits the box best. Use the same size for `design.png` and `live.png`.
+- **Case study page (optional):** write a few paragraphs below the closing `---` in `index.md`. The project then gets its own page at `/work/<folder>/` and a "Case study" link on its card. Without text there is no page, just the link to the live site.
+- **Design next to live (optional):** add `design.png` (a screenshot of the design file) and `live.png` (the live site at the same size), with `design: ./design.png` and `liveShot: ./live.png` in `index.md`. The card then shows a slider to drag between the two.
 
-## Before it goes live
+The screenshots for the first five projects were taken on 11 Nov 2026 with "Someone in … purchased" pop-ups hidden, since those show real customers' names.
+
+## The hero reel
+
+`public/reel/` holds the reel: `concepts.webm` (main, about 2 MB), `concepts.mp4` (fallback for older iPhones) and `poster.jpg` (its first frame). It shows 29 concept sites from https://arun-john-alt.github.io/previews/ for one second each, recorded by really scrolling each site in a phone-sized browser. The words around it (label, caption, count) are in `src/data/reel.json`.
+
+It plays only while on screen, has a pause button, and does not start for people who have "reduce motion" or data saver turned on. To remake it after new mocks: record the sites the same way (390 × 700 phone screen, 24 fps, one second each), encode VP9 for the webm and H.264 for the mp4, and update `count` in `reel.json`.
+
+## Before it is shared widely
 
 1. Replace every placeholder (search the site for "to add", "lorem", "Placeholder" and `[`).
-2. In `src/data/site.json` set `"draft": false`. While it is `true`, every page asks search engines not to list it.
-3. In `astro.config.mjs` set `site:` to the real address. This also turns on the link-preview picture that WhatsApp and Instagram show when someone shares the link (`public/og.png`, 1200 × 630; replace it to change the picture). The home-screen icon is `public/apple-touch-icon.png`.
-4. Run `npm run build` and check `dist/` on a phone first.
+2. In `src/data/site.json` set `"draft": false`, so search engines may list it.
+3. With a custom domain later: set `site:` in `astro.config.mjs` to it and delete the `base:` line.
 
-## Hosting (suggested, nothing is set up yet)
-
-The finished site is plain files in `dist/`, so any static host works. Free options that allow a freelancer's site: Netlify or Cloudflare Pages connected to a GitHub repository, or GitHub Pages. A custom domain can be added later. Nothing has been published or pushed.
+The link preview that WhatsApp and Instagram show is `public/og.png` (1200 × 630). The home-screen icon is `public/apple-touch-icon.png`.
 
 ## How it's built
 
-- [Astro](https://astro.build) 7, static output. No frameworks on the page; about 3 KB of JavaScript for the menu, the sliders, the hero's live measurements and gentle scroll reveals.
+- [Astro](https://astro.build) 7, static output, hosted on GitHub Pages under `/swathi-portfolio/` (`base` in `astro.config.mjs`; internal links go through `src/lib/url.ts`).
+- No frameworks on the page; a few KB of JavaScript for the menu, the reel, the hero's live measurement, the sliders and gentle scroll reveals.
 - Plain CSS with a few variables at the top of `src/styles/global.css` (colours, fonts, spacing).
 - Fonts are self-hosted from npm: Schibsted Grotesk (text) and IBM Plex Mono (labels).
 - Works without JavaScript and with "reduce motion" turned on.
@@ -88,10 +95,13 @@ The finished site is plain files in `dist/`, so any static host works. Free opti
 
 ```
 src/data/site.json          all the words and contact details
-src/content/work/<project>/ one folder per project (index.md + design.png + live.png)
+src/data/reel.json          the reel's label, caption and count
+src/content/work/<project>/ one folder per project (index.md + desktop.jpg + phone.jpg)
 src/assets/about/           her photo
 src/components/             the sections (Hero, Work, Services, Process, About, Contact)
 src/styles/global.css       colours, fonts, shared styles
 src/scripts/site.ts         the small bit of JavaScript
-public/favicon.svg          the browser-tab icon
+public/reel/                the hero reel video and its poster
+public/og.png               the link-preview picture
+.github/workflows/deploy.yml  builds and publishes to GitHub Pages
 ```

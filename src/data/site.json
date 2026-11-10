@@ -47,9 +47,7 @@
     "whatsappMessage": "Hi Swathi, I saw your portfolio and have a design I'd like built.",
     "email": "",
     "links": [
-      { "label": "Instagram", "url": "" },
-      { "label": "LinkedIn", "url": "" },
-      { "label": "Behance", "url": "" }
+      { "label": "Instagram", "url": "https://www.instagram.com/swathi_krithvi/" }
     ]
   }
 }

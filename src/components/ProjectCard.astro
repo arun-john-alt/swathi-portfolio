@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Compare from './Compare.astro';
+import { url } from '../lib/url';
+import ProjectVisual from './ProjectVisual.astro';
 import Link from './Link.astro';
 
 interface Props {
@@ -10,28 +11,40 @@ interface Props {
 const { entry, index } = Astro.props;
 const p = entry.data;
 const num = String(index + 1).padStart(2, '0');
+const hasCaseStudy = Boolean(entry.body?.trim());
+// Just the domain ("kattam.in"), so long page addresses don't wrap the row.
+const host = p.live ? new URL(p.live).hostname.replace(/^www\./, '') : '';
 ---
 
 <article class="project">
-  <Compare title={p.title} type={p.type} design={p.design} liveShot={p.liveShot} folder={entry.id} />
+  <ProjectVisual entry={entry} />
 
   <div class="project__body">
     <p class="project__meta mono">
       <span class="project__num">{num}</span>
       <span>{p.type}</span>
-      <span>{p.year}</span>
+      {p.year && <span>{p.year}</span>}
       {p.placeholder && <span class="ph-tag">Placeholder</span>}
     </p>
     <h3>{p.title}</h3>
     <p class="project__summary">{p.summary}</p>
-    <dl class="project__spec mono">
-      <div><dt>Role</dt><dd>{p.role}</dd></div>
-    </dl>
+    {
+      (p.role || host) && (
+        <dl class="project__spec mono">
+          {p.role && <div><dt>Role</dt><dd>{p.role}</dd></div>}
+          {host && <div><dt>Live at</dt><dd>{host}</dd></div>}
+        </dl>
+      )
+    }
     <div class="project__links">
-      <a class="text-link" href={`/work/${entry.id}/`}>
-        <span class="text-link__label">Case study</span><span aria-hidden="true">→</span>
-      </a>
-      <Link href={p.live} label="Live site" arrow="↗" external />
+      {
+        hasCaseStudy && (
+          <a class="text-link" href={url(`/work/${entry.id}/`)}>
+            <span class="text-link__label">Case study</span><span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+      <Link href={p.live} label="Visit the site" arrow="↗" external />
     </div>
   </div>
 </article>
@@ -91,6 +104,7 @@ const num = String(index + 1).padStart(2, '0');
   .project__spec dd {
     margin: 0;
     text-align: right;
+    overflow-wrap: anywhere;
   }
 
   .project__links {

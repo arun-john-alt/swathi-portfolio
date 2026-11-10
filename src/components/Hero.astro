@@ -1,5 +1,7 @@
 ---
 import site from '../data/site.json';
+import reel from '../data/reel.json';
+import { url } from '../lib/url';
 import Frame from './Frame.astro';
 ---
 
@@ -7,42 +9,56 @@ import Frame from './Frame.astro';
   <span slot="meta" class="frame__meta bp"></span>
 
   <div class="hero">
-    <div class="hero__main">
-      <p class="hero__eyebrow mono">{site.eyebrow}</p>
+    <p class="hero__eyebrow mono">{site.eyebrow}</p>
 
-      <!-- The headline is drawn as a selected layer: outline, corner handles and its live size. -->
-      <div class="sel" data-sel>
-        <h1 id="hero-title">{site.headline}</h1>
-        <span class="sel__box" aria-hidden="true">
-          <i class="sel__h sel__h--tl"></i><i class="sel__h sel__h--tr"></i>
-          <i class="sel__h sel__h--bl"></i><i class="sel__h sel__h--br"></i>
-        </span>
-        <span class="sel__dims mono" aria-hidden="true" data-sel-dims>Fill × Hug</span>
-        <!-- A spacing measurement, as in a developer hand-off. The 48 is the real gap below. -->
-        <span class="redline" aria-hidden="true"><span class="redline__val mono">48</span></span>
-      </div>
-
-      <p class="hero__intro">{site.intro}</p>
-
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="#work">See the work</a>
-        <a class="btn btn--ghost" href="#contact">Contact</a>
-      </div>
+    <!-- The headline is drawn as a selected layer: outline, corner handles and its live size. -->
+    <div class="sel" data-sel>
+      <h1 id="hero-title">{site.headline}</h1>
+      <span class="sel__box" aria-hidden="true">
+        <i class="sel__h sel__h--tl"></i><i class="sel__h sel__h--tr"></i>
+        <i class="sel__h sel__h--bl"></i><i class="sel__h sel__h--br"></i>
+      </span>
+      <span class="sel__dims mono" aria-hidden="true" data-sel-dims>Fill × Hug</span>
+      <!-- A spacing measurement, as in a developer hand-off. The 48 is the real gap below. -->
+      <span class="redline" aria-hidden="true"><span class="redline__val mono">48</span></span>
     </div>
 
-    <!-- Wide screens only: an inspector panel that reads the headline's real styles. -->
-    <aside class="inspect mono" aria-hidden="true" data-inspect>
-      <p class="inspect__title"><span>Inspect</span><span class="inspect__tag">h1</span></p>
-      <dl>
-        <div><dt>W × H</dt><dd data-i="box">—</dd></div>
-        <div><dt>Font</dt><dd>Schibsted Grotesk</dd></div>
-        <div><dt>Weight</dt><dd data-i="weight">700</dd></div>
-        <div><dt>Size / line</dt><dd data-i="size">—</dd></div>
-        <div><dt>Tracking</dt><dd data-i="tracking">−3%</dd></div>
-        <div><dt>Fill</dt><dd><i class="swatch"></i>#141414</dd></div>
-      </dl>
-      <p class="inspect__foot">Resize the window: the numbers follow.</p>
-    </aside>
+    <!-- The reel: a phone screen running through the concept sites, one second each. -->
+    <figure class="reel" data-reel data-seg={reel.seconds} data-count={reel.count}>
+      <div class="reel__label mono">
+        <span><span aria-hidden="true">▶</span> {reel.label}</span>
+        <span class="reel__count" data-reel-count aria-hidden="true">01 / {String(reel.count).padStart(2, '0')}</span>
+      </div>
+      <div class="reel__screen">
+        <video
+          muted
+          loop
+          playsinline
+          controls
+          preload="none"
+          width="540"
+          height="970"
+          poster={url(reel.poster)}
+          aria-label={reel.description}
+          data-reel-video
+        >
+          <source src={url(reel.webm)} type="video/webm" />
+          <source src={url(reel.mp4)} type="video/mp4" />
+        </video>
+        <button class="reel__toggle" type="button" aria-label="Pause the reel" hidden data-reel-toggle>
+          <svg class="reel__icon reel__icon--pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor"></path></svg>
+          <svg class="reel__icon reel__icon--play" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2l10 6-10 6z" fill="currentColor"></path></svg>
+        </button>
+      </div>
+      <figcaption class="reel__caption mono">{reel.description}</figcaption>
+    </figure>
+
+    <p class="hero__intro">{site.intro}</p>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="#work">See the work</a>
+      <a class="btn btn--ghost" href="#contact">Contact</a>
+    </div>
   </div>
 </Frame>
 
@@ -61,21 +77,30 @@ import Frame from './Frame.astro';
     }
   }
 
+  /* Phones: eyebrow, headline, reel, intro, buttons. Wide screens: the reel gets its own column. */
   .hero {
     /* The outline sits on the headline's own box (as a design tool draws a text layer),
        so the size chip and the outline always agree. */
     --sel-out: 0px;
-    --gap: 48px; /* gap from the outline to the intro; the redline shows this number */
+    --gap: 48px; /* gap below the headline's outline; the redline shows this number */
     display: grid;
-    gap: 40px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'eyebrow'
+      'sel'
+      'reel'
+      'intro'
+      'actions';
   }
 
   .hero__eyebrow {
+    grid-area: eyebrow;
     color: var(--ink-2);
     margin-bottom: 26px;
   }
 
   .sel {
+    grid-area: sel;
     position: relative;
   }
 
@@ -176,81 +201,125 @@ import Frame from './Frame.astro';
     line-height: 1.5;
   }
 
+  /* ---------- The reel ---------- */
+
+  .reel {
+    grid-area: reel;
+    margin: calc(var(--sel-out) + var(--gap)) 0 0;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .reel__label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 2px 8px;
+    color: var(--muted);
+  }
+  .reel__count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reel__screen {
+    position: relative;
+    aspect-ratio: 540 / 970;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--ink);
+    border: 5px solid var(--ink);
+    box-shadow: 0 24px 48px -28px rgba(0, 0, 0, 0.55);
+  }
+
+  .reel__screen video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 17px;
+    background: var(--ink);
+  }
+
+  .reel__toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out);
+  }
+  .reel__toggle:active {
+    transform: scale(0.94);
+  }
+  .reel__toggle[hidden] {
+    display: none;
+  }
+  .reel__icon--play {
+    display: none;
+  }
+  .reel.is-paused .reel__icon--play {
+    display: block;
+  }
+  .reel.is-paused .reel__icon--pause {
+    display: none;
+  }
+
+  .reel__caption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
   .hero__intro {
-    margin-top: calc(var(--sel-out) + var(--gap));
+    grid-area: intro;
+    margin-top: 32px;
     max-width: 46ch;
     font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
     color: var(--ink-2);
   }
 
   .hero__actions {
+    grid-area: actions;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 28px;
   }
 
-  .inspect {
-    display: none;
+  /* Wide screens: text on the left, the reel standing in its own column on the right. */
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      grid-template-rows: auto auto auto auto 1fr;
+      grid-template-areas:
+        'eyebrow reel'
+        'sel reel'
+        'intro reel'
+        'actions reel'
+        '. reel';
+      column-gap: clamp(40px, 5vw, 96px);
+      padding-block: clamp(8px, 2vw, 32px);
+    }
+    .reel {
+      margin-top: 0;
+      max-width: none;
+    }
+    .hero__intro {
+      margin-top: calc(var(--sel-out) + var(--gap));
+    }
   }
 
-  /* The inspector needs room beside the headline, so it appears on wide screens only. */
-  @media (min-width: 1200px) {
+  @media (min-width: 1280px) {
     .hero {
-      grid-template-columns: minmax(0, 1fr) 248px;
-      align-items: start;
-      gap: 56px;
-      padding-block: clamp(24px, 4vw, 56px);
-    }
-
-    /* Lines up with the top of the selected headline, like a design tool's right-hand panel. */
-    .inspect {
-      display: block;
-      margin-top: 44px;
-      border: 1px solid var(--line);
-      background: #fafaf9;
-      font-size: 0.75rem;
-    }
-    .inspect__title {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--line);
-      font-weight: 500;
-    }
-    .inspect__tag {
-      color: var(--select);
-    }
-    .inspect dl {
-      margin: 0;
-      padding: 6px 12px;
-    }
-    .inspect dl div {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 5px 0;
-    }
-    .inspect dt {
-      color: var(--muted);
-    }
-    .inspect dd {
-      margin: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-variant-numeric: tabular-nums;
-    }
-    .swatch {
-      width: 10px;
-      height: 10px;
-      background: var(--ink);
-      border-radius: 2px;
-    }
-    .inspect__foot {
-      padding: 10px 12px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
+      grid-template-columns: minmax(0, 1fr) 330px;
     }
   }
 

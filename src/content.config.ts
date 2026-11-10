@@ -15,12 +15,14 @@ const work = defineCollection({
       title: z.string(),
       order: z.number(),
       type: z.string(), // e.g. "Shopify store" or "Static website"
-      year: z.string(),
-      role: z.string(),
+      year: z.string().optional(),
+      role: z.string().optional(),
       summary: z.string(),
       live: z.string().default(''), // the live site's address; empty shows a placeholder link
-      design: image().optional(), // design.png next to index.md
+      design: image().optional(), // design.png next to index.md (with live.png: the design/live slider)
       liveShot: image().optional(), // live.png next to index.md
+      desktop: image().optional(), // desktop.png: the live site at 1440 × 900
+      phone: image().optional(), // phone.png: the live site at 390 × 844
       placeholder: z.boolean().default(false), // true shows a "Placeholder" tag
     }),
 });

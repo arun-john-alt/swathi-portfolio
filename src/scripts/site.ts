@@ -1,4 +1,4 @@
-// The site's only JavaScript: the phone menu, the hero's live measurements,
+// The site's only JavaScript: the phone menu, the hero's live measurement, the hero reel,
 // the design/live sliders and the scroll reveals. Everything works without it, just less alive.
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -36,14 +36,13 @@ function setupMenu() {
   });
 }
 
-/* ---------- Hero: the selected headline reports its real size and styles ---------- */
+/* ---------- Hero: the selected headline reports its real size ---------- */
 
 function setupHero() {
   const sel = document.querySelector<HTMLElement>('[data-sel]');
   const h1 = sel?.querySelector('h1');
   if (!sel || !h1) return;
   const dims = sel.querySelector<HTMLElement>('[data-sel-dims]');
-  const field = (k: string) => document.querySelector<HTMLElement>(`[data-inspect] [data-i="${k}"]`);
 
   const range = document.createRange();
   range.selectNodeContents(h1);
@@ -54,27 +53,82 @@ function setupHero() {
     const lines = Array.from(range.getClientRects());
     const hug = Math.ceil(lines.length ? Math.max(...lines.map((l) => l.right)) - r.left : r.width);
     sel.style.setProperty('--hug', `${hug}px`);
-    const size = `${hug} × ${Math.round(r.height)}`;
-    if (dims) dims.textContent = size;
-    const cs = getComputedStyle(h1);
-    const fs = parseFloat(cs.fontSize);
-    const lh = cs.lineHeight === 'normal' ? fs * 1.2 : parseFloat(cs.lineHeight);
-    const box = field('box');
-    if (box) box.textContent = size;
-    const sz = field('size');
-    if (sz) sz.textContent = `${Math.round(fs)} / ${Math.round(lh)}`;
-    const w = field('weight');
-    if (w) w.textContent = cs.fontWeight;
-    const tr = field('tracking');
-    if (tr) {
-      const pct = Math.round((parseFloat(cs.letterSpacing) / fs) * 100);
-      tr.textContent = `${pct < 0 ? '−' : ''}${Math.abs(pct)}%`;
-    }
+    if (dims) dims.textContent = `${hug} × ${Math.round(r.height)}`;
   };
 
   update();
   new ResizeObserver(update).observe(h1);
   document.fonts?.ready.then(update);
+}
+
+/* ---------- Hero reel: plays while on screen, never for people who asked for less motion ---------- */
+
+function setupReel() {
+  const fig = document.querySelector<HTMLElement>('[data-reel]');
+  const video = fig?.querySelector<HTMLVideoElement>('[data-reel-video]');
+  const toggle = fig?.querySelector<HTMLButtonElement>('[data-reel-toggle]');
+  if (!fig || !video || !toggle) return;
+  const count = fig.querySelector<HTMLElement>('[data-reel-count]');
+  const seg = Number(fig.dataset.seg) || 1;
+  const total = Number(fig.dataset.count) || 1;
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  // The script takes over from the browser's own controls.
+  video.removeAttribute('controls');
+  toggle.hidden = false;
+
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  let userPaused = reduceMotion || Boolean(saveData);
+  let onScreen = false;
+
+  const show = (playing: boolean) => {
+    fig.classList.toggle('is-paused', !playing);
+    toggle.setAttribute('aria-label', playing ? 'Pause the reel' : 'Play the reel');
+  };
+  const play = () => {
+    video.preload = 'auto';
+    video.play().then(
+      () => show(true),
+      () => show(false), // autoplay refused: leave the play button showing
+    );
+  };
+  const pause = () => {
+    video.pause();
+    show(false);
+  };
+
+  show(false);
+  toggle.addEventListener('click', () => {
+    if (video.paused) {
+      userPaused = false;
+      play();
+    } else {
+      userPaused = true;
+      pause();
+    }
+  });
+
+  video.addEventListener('timeupdate', () => {
+    if (count) count.textContent = `${pad(Math.min(total, Math.floor(video.currentTime / seg) + 1))} / ${pad(total)}`;
+  });
+
+  // Only play while it can be seen; stop when it scrolls away or the tab is hidden.
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        if (onScreen && !userPaused) play();
+        else if (!onScreen && !video.paused) pause();
+      },
+      { threshold: 0.25 },
+    ).observe(video);
+  } else if (!userPaused) {
+    play();
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !video.paused) pause();
+    else if (!document.hidden && onScreen && !userPaused) play();
+  });
 }
 
 /* ---------- Design / live sliders ---------- */
@@ -216,5 +270,6 @@ function setupReveals() {
 
 setupMenu();
 setupHero();
+setupReel();
 setupCompares();
 setupReveals();
