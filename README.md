@@ -6,7 +6,7 @@ A small, fast portfolio site for Swathi, who turns designs into Shopify stores a
 
 The idea ("Frame to live"): the page looks like a design tool's canvas. Each section is a white artboard with its name above it, and the headline is drawn as a selected layer. Beside it, a phone screen plays a quick reel of the concept sites made in the Client Extractor workflow. Her live projects are shown on a desktop screen and a phone.
 
-**Still placeholder:** the intro line, services, process steps, About text, tools, WhatsApp number and email (lorem ipsum or dashed "to add" markers). Until Swathi's own words are in, `"draft": true` in `src/data/site.json` asks search engines not to list the site.
+**The words** were written on 11 Nov 2026 from what her projects show (no invented clients, numbers or quotes). Swathi should read them once and change anything she wouldn't say that way; they all live in `src/data/site.json`. Her WhatsApp number and email aren't in yet, so those contact rows stay hidden until they are. While `"draft": true` is set in `site.json`, the site asks search engines not to list it.
 
 ## Run it on this laptop
 
@@ -68,6 +68,19 @@ phone: ./phone.jpg
 
 The screenshots for the first five projects were taken on 11 Nov 2026 with "Someone in … purchased" pop-ups hidden, since those show real customers' names.
 
+## Logo
+
+`brand/` holds Swathi's logo: lowercase **swathi** in Schibsted Grotesk (the site's typeface, weight 800, tight spacing), with the dot of the i drawn as a blue square, the same corner handle that marks the selected headline on the site. The letters are real vector shapes, so the files work anywhere without the font.
+
+| File | Use |
+|---|---|
+| `logo.svg`, `logo-2000.png` | dark logo for light backgrounds |
+| `logo-white.svg`, `logo-white-2000.png` | white logo for dark backgrounds or photos |
+| `mark.svg`, `mark-512.png` | the short version: "s" and the blue square on a dark tile (favicon, small spaces) |
+| `profile-picture-1080.png` | square version for an Instagram or WhatsApp profile picture |
+
+Colours: ink `#141414`, blue `#0a72d6`. The site uses `public/logo.svg` in the header, `public/favicon.svg` for the browser tab and `public/apple-touch-icon.png` for the phone home screen.
+
 ## The hero reel
 
 `public/reel/` holds the reel: `concepts.webm` (main, about 2 MB), `concepts.mp4` (fallback for older iPhones) and `poster.jpg` (its first frame). It shows 29 concept sites from https://arun-john-alt.github.io/previews/ for one second each, recorded by really scrolling each site in a phone-sized browser. The words around it (label, caption, count) are in `src/data/reel.json`.
@@ -76,7 +89,7 @@ It plays only while on screen, has a pause button, and does not start for people
 
 ## Before it is shared widely
 
-1. Replace every placeholder (search the site for "to add", "lorem", "Placeholder" and `[`).
+1. Swathi reads the words once (see above) and adds her WhatsApp number and email if she wants them on the site.
 2. In `src/data/site.json` set `"draft": false`, so search engines may list it.
 3. With a custom domain later: set `site:` in `astro.config.mjs` to it and delete the `base:` line.
 
@@ -102,6 +115,7 @@ src/components/             the sections (Hero, Work, Services, Process, About, 
 src/styles/global.css       colours, fonts, shared styles
 src/scripts/site.ts         the small bit of JavaScript
 public/reel/                the hero reel video and its poster
+brand/                      the logo files (SVG and PNG)
 public/og.png               the link-preview picture
 .github/workflows/deploy.yml  builds and publishes to GitHub Pages
 ```

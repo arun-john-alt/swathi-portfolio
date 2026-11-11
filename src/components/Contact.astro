@@ -4,6 +4,8 @@ import Frame from './Frame.astro';
 import { whatsappUrl } from '../lib/placeholder';
 
 const c = site.contact;
+const links: { label: string; url: string; display?: string }[] = c.links;
+// Channels with no number, address or link yet are left out: fill them in site.json and they appear.
 const channels = [
   {
     label: 'WhatsApp',
@@ -19,14 +21,14 @@ const channels = [
     missing: 'Address to add',
     external: false,
   },
-  ...c.links.map((l) => ({
+  ...links.map((l) => ({
     label: l.label,
-    value: l.url ? l.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : '',
+    value: l.display || (l.url ? l.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : ''),
     href: l.url,
     missing: 'Link to add',
     external: true,
   })),
-];
+].filter((ch) => ch.href);
 ---
 
 <Frame id="contact" name="Contact" labelledby="contact-title">

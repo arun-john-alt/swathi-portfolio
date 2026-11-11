@@ -1,5 +1,6 @@
 ---
 import site from '../data/site.json';
+import { url } from '../lib/url';
 
 interface Props {
   base?: string; // '' on the home page, '/' on inner pages so anchors point home
@@ -16,9 +17,9 @@ const links = [
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="wordmark" href={base || '#top'} aria-label={`${site.name}, back to top`}>
-      <span class="wordmark__mark" aria-hidden="true"></span>
-      <span>{site.name}</span>
+    <a class="wordmark" href={base || '#top'}>
+      <!-- The logo: "swathi" with the i's dot drawn as a selection handle. Source files in brand/. -->
+      <img src={url('/logo.svg')} alt={site.name} width="94" height="26" />
     </a>
 
     <button
@@ -65,37 +66,13 @@ const links = [
   .wordmark {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
     min-height: 44px;
-    font-weight: 700;
-    font-size: 1.125rem;
-    letter-spacing: -0.02em;
     text-decoration: none;
   }
-
-  /* A tiny selected frame: the site's mark. */
-  .wordmark__mark {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid var(--select);
-  }
-  .wordmark__mark::before,
-  .wordmark__mark::after {
-    content: '';
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #fff;
-    border: 1.5px solid var(--select);
-  }
-  .wordmark__mark::before {
-    top: -4px;
-    left: -4px;
-  }
-  .wordmark__mark::after {
-    bottom: -4px;
-    right: -4px;
+  .wordmark img {
+    display: block;
+    height: 26px;
+    width: auto;
   }
 
   .menu-btn {

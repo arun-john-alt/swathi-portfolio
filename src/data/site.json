@@ -4,50 +4,77 @@
   "role": "Web designer",
   "eyebrow": "Web designer · Shopify & static sites",
   "headline": "I turn designs into Shopify stores and static websites.",
-  "intro": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "intro": "You bring the design. I build it into a working site that looks the way it was drawn, and works just as well on a phone as on a laptop.",
   "seo": {
     "title": "Swathi · Web designer",
-    "description": "Swathi turns designs into Shopify stores and static websites. Placeholder description: replace before launch."
+    "description": "Swathi builds Shopify stores, WordPress pages and static websites from finished designs, made to work on phones first."
   },
   "services": [
     {
       "name": "Shopify stores",
-      "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-      "items": ["Lorem ipsum dolor sit", "Consectetur adipiscing elit", "Sed do eiusmod tempor", "Ut labore et dolore magna"]
+      "summary": "For brands that sell online. Your design becomes a Shopify store you can run yourself: add products, change banners, take orders.",
+      "items": [
+        "Theme built to match your design",
+        "Home, collection and product pages",
+        "Menu, search and cart that work on phones",
+        "A walkthrough so you can add products yourself"
+      ]
     },
     {
       "name": "Static websites",
-      "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud.",
-      "items": ["Lorem ipsum dolor sit", "Quis nostrud exercitation", "Ullamco laboris nisi", "Duis aute irure dolor"]
+      "summary": "For businesses that need a few clear pages, not a shop. Quick to load, cheap to host and nothing to update every month.",
+      "items": [
+        "Hand-built HTML and CSS",
+        "WhatsApp, call and map buttons where people look for them",
+        "Light pages that open fast on mobile data",
+        "Set up on your own domain"
+      ]
     },
     {
-      "name": "[Third service, to confirm]",
-      "summary": "",
-      "items": []
+      "name": "WordPress pages",
+      "summary": "Landing pages and full sites in WordPress with Elementor, for teams that want to change their own text and photos.",
+      "items": [
+        "Landing pages for ads and offers",
+        "Sections you can edit without code",
+        "Enquiry buttons up front",
+        "Set up on your hosting"
+      ]
     }
   ],
   "process": [
-    { "name": "Design file", "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do." },
-    { "name": "Build", "text": "Eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim." },
-    { "name": "Phone check", "text": "Ad minim veniam, quis nostrud exercitation ullamco laboris nisi." },
-    { "name": "Launch", "text": "Duis aute irure dolor in reprehenderit in voluptate velit esse." }
+    {
+      "name": "Design file",
+      "text": "You send the design: a Figma file, a Canva page or screenshots. We agree on the pages and what each one needs to do."
+    },
+    {
+      "name": "Build",
+      "text": "I build it page by page and share a preview link, so you can see it take shape and ask for changes early."
+    },
+    {
+      "name": "Phone check",
+      "text": "Every page is checked on phones and laptops: readable text, buttons big enough to tap, nothing that slides sideways."
+    },
+    {
+      "name": "Launch",
+      "text": "The site goes live on your domain, and you get a short walkthrough of how to update it."
+    }
   ],
   "about": {
     "heading": "Hi, I'm Swathi.",
     "paragraphs": [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident."
+      "I'm a web designer. Most projects reach me as a finished design, and my job is to build it into a site that works: a Shopify store for brands that sell online, or a WordPress or static site for everyone else.",
+      "So far that has meant stores for a jewellery brand and two clothing labels, a landing page for a skin and hair clinic in Coimbatore, and a site for an ocean adventure company. Most people open sites like these on a phone, so that's where every page starts."
     ],
-    "tools": ["Shopify", "[Tool]", "[Tool]", "[Tool]", "[Tool]"]
+    "tools": ["Shopify", "WordPress", "Elementor", "HTML & CSS"]
   },
   "contact": {
     "heading": "Have a design that needs building?",
-    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
+    "text": "Send it over on Instagram with a line about what you need, and I'll get back to you with how I'd build it.",
     "whatsapp": "",
     "whatsappMessage": "Hi Swathi, I saw your portfolio and have a design I'd like built.",
     "email": "",
     "links": [
-      { "label": "Instagram", "url": "https://www.instagram.com/swathi_krithvi/" }
+      { "label": "Instagram", "url": "https://www.instagram.com/swathi_krithvi/", "display": "@swathi_krithvi" }
     ]
   }
 }

@@ -97,4 +97,12 @@ import { isPlaceholderText, placeholderLabel } from '../lib/placeholder';
       align-items: center;
     }
   }
+
+  /* Three services sit side by side once there is room for three readable columns. */
+  @media (min-width: 1100px) {
+    .services {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: clamp(32px, 3.5vw, 56px);
+    }
+  }
 </style>
