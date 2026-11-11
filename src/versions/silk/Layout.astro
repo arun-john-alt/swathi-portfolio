@@ -29,15 +29,16 @@ const { title, description } = Astro.props;
     {/* The headline face is on the first screen, so it is fetched before the stylesheet asks for it. */}
     <link rel="preload" href={rozhaLatin} as="font" type="font/woff2" crossorigin />
     <script is:inline>
-      // Before the first paint: say JavaScript is on, and whether the sarees may start folded.
-      // If the page script never arrives, the watchdog lays everything flat again, so no work stays hidden.
+      // Before the first paint: say JavaScript is on, and whether motion is welcome. With motion, the
+      // sarees may start folded (js-fold) and each section waits to be woven in (js-weave).
+      // If the page script never arrives, the watchdog lays everything flat and finished, so nothing stays hidden.
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        d.classList.add('js-fold');
+        d.classList.add('js-fold', 'js-weave');
         setTimeout(function () {
-          if (!window.__silkReady) d.classList.remove('js-fold');
+          if (!window.__silkReady) d.classList.remove('js-fold', 'js-weave');
         }, 3000);
       })();
     </script>

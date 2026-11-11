@@ -31,7 +31,8 @@ const nav = [
 
   <div class="wall" id="top">
     <header class="rail">
-      <a class="pane pane--link rail__logo" href="#top" aria-label="Swathi, back to the top" data-seq style="--i:0">
+      <a class="pane pane--link rail__logo" href="#top" aria-label="Swathi, back to the top" data-seq data-logo style="--i:0">
+        <span class="glint" aria-hidden="true"></span>
         <Logo />
       </a>
 
@@ -85,6 +86,7 @@ const nav = [
           <div class="pane hero__tr2" data-seq style="--i:2"></div>
         </div>
         <div class="pane hero__head" data-seq style="--i:3">
+          <span class="glint" aria-hidden="true"></span>
           <h1 id="hero-title" class="disp" data-lines>
             {headline.map((w) => <><span class="w">{w}</span>{' '}</>)}
           </h1>
@@ -110,7 +112,9 @@ const nav = [
         <div class="pane hero__intro" data-seq style="--i:4">
           <p>You bring the design. I build it into a site that looks the way it was drawn, and works on a phone as well as a laptop.</p>
         </div>
-        <div class="pane pane--cobalt hero__col" aria-hidden="true" data-seq style="--i:4"></div>
+        <div class="pane pane--cobalt hero__col" aria-hidden="true" data-seq style="--i:4">
+          <span class="glint"></span>
+        </div>
         <a class="pane pane--cobalt pane--link cta hero__cta" href={ig.url} data-seq style="--i:5">
           <span class="cta__main disp">Message me on Instagram</span>
           <span class="cta__sub"><Icon name="instagram" size={20} />{ig.display}</span>
@@ -200,13 +204,14 @@ const nav = [
       </section>
 
       {/* ---------- What I build ---------- */}
-      <section class="sect services" id="services" aria-labelledby="services-title">
-        <div class="pane sect__head">
+      {/* Entering, its panes catch the light one after another, the lead Shopify pane last. */}
+      <section class="sect services" id="services" aria-labelledby="services-title" data-enter>
+        <div class="pane sect__head" data-catch style="--k:0">
           <h2 id="services-title" class="disp">What I build</h2>
         </div>
         {
           site.services.map((s, i) => (
-            <article class:list={['pane svc', i === 0 && 'svc--lead']}>
+            <article class:list={['pane svc', i === 0 && 'svc--lead']} data-catch style={`--k:${i === 0 ? site.services.length : i}`}>
               <h3 class="disp">{s.name}</h3>
               <p class="svc__sum">{s.summary}</p>
               <ul class="svc__items" aria-label={`${s.name}: what you get`}>
@@ -220,14 +225,15 @@ const nav = [
       </section>
 
       {/* ---------- How I work ---------- */}
-      <section class="sect process" id="process" aria-labelledby="process-title">
-        <div class="pane sect__head">
+      {/* Phones: the step nearest the centre brightens. Desktop: a light passes along the row. */}
+      <section class="sect process" id="process" aria-labelledby="process-title" data-enter>
+        <div class="pane sect__head" data-catch style="--k:0">
           <h2 id="process-title" class="disp">How I work</h2>
         </div>
         <ol class="steps">
           {
-            site.process.map((s) => (
-              <li class="pane step">
+            site.process.map((s, i) => (
+              <li class="pane step" data-step style={`--k:${i}`}>
                 <h3 class="disp">{s.name}</h3>
                 <p>{s.text}</p>
               </li>
@@ -237,7 +243,8 @@ const nav = [
       </section>
 
       {/* ---------- About ---------- */}
-      <section class="sect about" id="about" aria-labelledby="about-title">
+      {/* Entering, the photo defrosts and the heading pane catches the daylight after it. */}
+      <section class="sect about" id="about" aria-labelledby="about-title" data-enter>
         <figure class="pane pane--shot about__photo">
           <Shot
             seed={360}
@@ -248,19 +255,20 @@ const nav = [
             pos="50% 30%"
           />
         </figure>
-        <div class="pane about__head">
+        <div class="pane about__head" data-catch style="--k:5">
           <h2 id="about-title" class="disp">{site.about.heading}</h2>
         </div>
-        <div class="pane about__text">
+        <div class="pane about__text" data-catch style="--k:6">
           {site.about.paragraphs.map((t) => <p>{t}</p>)}
         </div>
         <ul class="about__tools" aria-label="Tools I build with">
-          {site.about.tools.map((t) => <li class="pane about__tool label">{t}</li>)}
+          {site.about.tools.map((t, i) => <li class="pane about__tool label" data-catch style={`--k:${7 + i * 0.6}`}>{t}</li>)}
         </ul>
       </section>
 
       {/* ---------- The close ---------- */}
-      <section class="sect close" id="contact" aria-labelledby="contact-title">
+      {/* Entering, the oxblood pane lights from behind, then its cobalt pane backlights and holds. */}
+      <section class="sect close" id="contact" aria-labelledby="contact-title" data-enter>
         <div class="pane pane--oxblood close__ask">
           <h2 id="contact-title" class="disp">{site.contact.heading}</h2>
           <p>{site.contact.text}</p>
@@ -273,16 +281,17 @@ const nav = [
       </section>
     </main>
 
-    <footer class="sill">
-      <p class="pane sill__name">
+    {/* The sill catches the last of the light, left to right. */}
+    <footer class="sill" data-enter>
+      <p class="pane sill__name" data-catch style="--k:0">
         <span class="disp sill__word">Swathi</span>
         <span class="label">{site.role}</span>
       </p>
-      <a class="pane pane--link sill__link" href={ig.url}>
+      <a class="pane pane--link sill__link" href={ig.url} data-catch style="--k:1">
         <span class="label">Instagram</span>
         <Icon name="instagram" />
       </a>
-      <a class="pane pane--link sill__link" href="#top">
+      <a class="pane pane--link sill__link" href="#top" data-catch style="--k:2">
         <span class="label">Back to top</span>
         <Icon name="up" />
       </a>

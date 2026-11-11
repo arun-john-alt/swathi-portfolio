@@ -1,14 +1,15 @@
 ---
 // A section drawn as an artboard: its name sits above it on the grey canvas, like a frame in a design file.
+// Sections don't share one entrance; each plays its own moment (see the components' [data-enter] styles).
 interface Props {
   id?: string;
   name: string;
   meta?: string;
   labelledby?: string;
   class?: string;
-  reveal?: boolean; // fade in on scroll; off for the first screen
+  reveal?: boolean; // kept for compatibility; boards no longer fade in
 }
-const { id, name, meta, labelledby, class: className, reveal = true } = Astro.props;
+const { id, name, meta, labelledby, class: className } = Astro.props;
 ---
 
 <section class:list={['frame', className]} id={id} aria-labelledby={labelledby}>
@@ -17,7 +18,7 @@ const { id, name, meta, labelledby, class: className, reveal = true } = Astro.pr
     {meta && <span class="frame__meta">{meta}</span>}
     <slot name="meta" />
   </div>
-  <div class="board" data-reveal={reveal ? '' : undefined}>
+  <div class="board">
     <slot />
   </div>
 </section>

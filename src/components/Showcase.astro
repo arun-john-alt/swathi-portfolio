@@ -1,5 +1,9 @@
 ---
 // The live site on a desktop screen with the phone view in front of it, both real screenshots.
+// Motion (once, as it enters): the desktop image is placed into its frame the way a designer drops
+// an image in (a blue selection outline, the image filling from the top), then the phone is dragged
+// in and snaps into place against a red smart-guide line. While on screen the phone drifts slightly
+// against the page as you scroll (where the browser supports scroll-driven animation).
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -13,7 +17,7 @@ const { title, desktop, phone, eager = false } = Astro.props;
 const loading = eager ? 'eager' : 'lazy';
 ---
 
-<div class="showcase">
+<div class="showcase" data-enter>
   <figure class="showcase__desk">
     <Image
       src={desktop}
@@ -24,6 +28,7 @@ const loading = eager ? 'eager' : 'lazy';
     />
     <figcaption class="showcase__tag mono">Desktop · 1440</figcaption>
   </figure>
+  <span class="showcase__guide" aria-hidden="true"></span>
   <figure class="showcase__phone">
     <Image
       src={phone}
@@ -56,6 +61,16 @@ const loading = eager ? 'eager' : 'lazy';
     overflow: hidden;
   }
 
+  /* The selection outline shown while the image is being placed. */
+  .showcase__desk::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--select);
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .showcase__phone {
     position: absolute;
     right: 0;
@@ -67,6 +82,21 @@ const loading = eager ? 'eager' : 'lazy';
     background: var(--ink);
     overflow: hidden;
     box-shadow: 0 18px 36px -16px rgba(0, 0, 0, 0.45);
+    transition:
+      scale 220ms var(--ease-expo),
+      box-shadow 220ms var(--ease-expo);
+  }
+
+  /* The smart guide the phone snaps to: a red line along its left edge. */
+  .showcase__guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 75%;
+    width: 1px;
+    background: var(--redline);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .showcase :global(img) {
@@ -107,6 +137,108 @@ const loading = eager ? 'eager' : 'lazy';
       top: -30px;
       left: -4px;
       white-space: nowrap;
+    }
+  }
+
+  /* Hover (pointer devices): the phone lifts toward you a little. */
+  @media (hover: hover) {
+    .showcase:hover .showcase__phone {
+      scale: 1.03;
+      box-shadow: 0 26px 44px -18px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  /* ---------- The placing moment ---------- */
+
+  :global(.motion) .showcase:not(:global(.is-in)) .showcase__desk :global(img),
+  :global(.motion) .showcase:not(:global(.is-in)) .showcase__desk .showcase__tag {
+    clip-path: inset(0 0 100% 0);
+  }
+  :global(.motion) .showcase:not(:global(.is-in)) .showcase__phone {
+    opacity: 0;
+    transform: translate(10%, 18%);
+  }
+
+  :global(.motion) .showcase:global(.is-in) .showcase__desk :global(img) {
+    animation: place-image 760ms var(--ease-expo) 160ms backwards;
+  }
+  :global(.motion) .showcase:global(.is-in) .showcase__desk::after {
+    animation: select-flash 1100ms ease-out;
+  }
+  :global(.motion) .showcase:global(.is-in) .showcase__desk .showcase__tag {
+    animation: place-image 420ms var(--ease-expo) 700ms backwards;
+  }
+  :global(.motion) .showcase:global(.is-in) .showcase__phone {
+    animation: drag-in 620ms var(--ease-drag) 520ms backwards;
+  }
+  :global(.motion) .showcase:global(.is-in) .showcase__guide {
+    animation: guide-flash 520ms ease-out 1060ms;
+  }
+
+  @keyframes place-image {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+  @keyframes select-flash {
+    0% {
+      opacity: 0;
+    }
+    15%,
+    70% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes drag-in {
+    from {
+      opacity: 0;
+      transform: translate(10%, 18%);
+    }
+    35% {
+      opacity: 1;
+    }
+  }
+  @keyframes guide-flash {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    20%,
+    60% {
+      opacity: 1;
+    }
+  }
+
+  /* While on screen the phone drifts a little against the page: depth, not decoration. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .showcase__phone {
+        animation: phone-drift linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+      /* Once placed, the drift carries on alongside the drag-in. */
+      :global(.motion) .showcase:global(.is-in) .showcase__phone {
+        animation:
+          drag-in 620ms var(--ease-drag) 520ms backwards,
+          phone-drift linear both;
+        animation-timeline: auto, view();
+        animation-range: normal, entry 0% exit 100%;
+      }
+      @keyframes phone-drift {
+        from {
+          translate: 0 16px;
+        }
+        to {
+          translate: 0 -16px;
+        }
+      }
     }
   }
 </style>

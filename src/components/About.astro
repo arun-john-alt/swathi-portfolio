@@ -18,15 +18,19 @@ const { about } = site;
   <div class="about">
     <h2 id="about-title" class="about__head">{about.heading}</h2>
 
-    <div class="about__photo">
+    <div class="about__photo" data-enter>
       {
         photo ? (
-          <Image
-            src={photo}
-            alt={`Portrait of ${site.name}`}
-            widths={[400, 700, 1000]}
-            sizes="(min-width: 800px) 36vw, 280px"
-          />
+          <>
+            <Image
+              src={photo}
+              alt={`Portrait of ${site.name}`}
+              widths={[400, 700, 1000]}
+              sizes="(min-width: 800px) 36vw, 280px"
+            />
+            {/* Crop corners, shown while the photo is "uncropped" as it enters. */}
+            <span class="crop" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </>
         ) : (
           <div class="ph-box">
             <span class="ph-box__label mono">
@@ -42,13 +46,13 @@ const { about } = site;
       {about.paragraphs.map((para) => <p>{para}</p>)}
 
       <h3 class="about__tools-title mono">Tools</h3>
-      <ul class="tools">
+      <ul class="tools" data-enter>
         {
-          about.tools.map((tool) =>
+          about.tools.map((tool, i) =>
             isPlaceholderText(tool) ? (
-              <li class="tool tool--ph">tool to add</li>
+              <li class="tool tool--ph" style={`--i:${i}`}>tool to add</li>
             ) : (
-              <li class="tool">{tool}</li>
+              <li class="tool" style={`--i:${i}`}>{tool}</li>
             ),
           )
         }
@@ -75,11 +79,106 @@ const { about } = site;
 
   .about__photo {
     grid-area: photo;
+    position: relative;
     width: 100%;
     max-width: 280px;
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border: 1px solid var(--line);
+  }
+
+  /* Crop corners: four L-shaped handles at the corners of the crop box. */
+  .crop {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .crop i {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 0 solid #fff;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.55));
+  }
+  .crop i:nth-child(1) {
+    top: 0;
+    left: 0;
+    border-top-width: 4px;
+    border-left-width: 4px;
+  }
+  .crop i:nth-child(2) {
+    top: 0;
+    right: 0;
+    border-top-width: 4px;
+    border-right-width: 4px;
+  }
+  .crop i:nth-child(3) {
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+  }
+  .crop i:nth-child(4) {
+    bottom: 0;
+    right: 0;
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+  }
+
+  /* ---------- As the photo enters it is uncropped: the crop box is dragged out from the middle
+     to the edges, then its handles go. The tools are then set one by one. ---------- */
+
+  :global(.motion) .about__photo:not(:global(.is-in)) :global(img) {
+    clip-path: inset(16% 18%);
+  }
+  :global(.motion) .about__photo:global(.is-in) :global(img) {
+    animation: uncrop 900ms var(--ease-drag) 220ms backwards;
+  }
+  :global(.motion) .about__photo:global(.is-in) .crop {
+    animation:
+      crop-show 1500ms ease-out,
+      crop-box 900ms var(--ease-drag) 220ms backwards;
+  }
+
+  :global(.motion) .tools:not(:global(.is-in)) .tool {
+    opacity: 0;
+  }
+  :global(.motion) .tools:global(.is-in) .tool {
+    animation: tool-set 420ms var(--ease-expo) backwards;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+
+  @keyframes uncrop {
+    from {
+      clip-path: inset(16% 18%);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+  @keyframes crop-box {
+    from {
+      inset: 16% 18%;
+    }
+  }
+  @keyframes crop-show {
+    0% {
+      opacity: 0;
+    }
+    12%,
+    78% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes tool-set {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.94);
+    }
   }
   .about__photo :global(img) {
     width: 100%;

@@ -272,14 +272,16 @@ function setupCompares() {
   boxes.forEach((b) => io.observe(b));
 }
 
-/* ---------- Scroll reveals ---------- */
+/* ---------- Section moments ----------
+   Each [data-enter] element gets .is-in once it is a quarter into view, and its own CSS plays
+   that section's moment once (an image placed in its frame, a photo uncropped, a line drawn).
+   The page sets html.motion only when motion is welcome, and every hidden starting state hangs
+   off it, so without JS or with reduced motion everything simply sits in its final state. */
 
-function setupReveals() {
-  const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    els.forEach((el) => el.classList.add('is-in'));
-    return;
-  }
+function setupEnter() {
+  const els = document.querySelectorAll<HTMLElement>('[data-enter]');
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('motion');
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -289,13 +291,21 @@ function setupReveals() {
         }
       }
     },
-    // Start before the board is on screen, so nobody waits on a blank box.
-    { rootMargin: '0px 0px 15% 0px' },
+    { threshold: 0.25 },
   );
-  els.forEach((el) => {
-    // Anything already on screen at load shows straight away.
-    if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('is-in');
-    else io.observe(el);
+  els.forEach((el) => io.observe(el));
+}
+
+/* ---------- Logo: a click replays its intro (the word is selected again) ---------- */
+
+function setupLogo() {
+  const link = document.querySelector<HTMLAnchorElement>('.wordmark');
+  const wrap = link?.querySelector<HTMLElement>('.logo-wrap');
+  if (!link || !wrap || reduceMotion) return;
+  link.addEventListener('click', () => {
+    wrap.classList.remove('logo--intro');
+    void wrap.offsetWidth; // restart the CSS animations
+    wrap.classList.add('logo--intro');
   });
 }
 
@@ -303,4 +313,5 @@ setupMenu();
 setupHero();
 setupReel();
 setupCompares();
-setupReveals();
+setupEnter();
+setupLogo();

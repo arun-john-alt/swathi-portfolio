@@ -37,7 +37,8 @@ const tiles = ['seeded', 'rolled', 'bubbled']
     <link rel="preload" href={url('/v/glass/seeded.webp')} as="image" type="image/webp" />
     <style is:inline set:html={`:root{${tiles}}`}></style>
     <script is:inline>
-      document.documentElement.classList.add('js');
+      // 'intro' carries the opening light sequence; the logo removes and re-adds it to replay.
+      document.documentElement.classList.add('js', 'intro');
     </script>
   </head>
   <body>

@@ -35,22 +35,24 @@ const description = site.seo.description;
 ---
 
 <Layout title={title} description={description}>
-  <header class="strip">
-    <a class="strip__home" href={url('/v/silk/')} aria-label="Swathi, back to the top">
+  {/* "is-intro" marks the parts the opening weave plays on; the script lifts it when the weave is over. */}
+  <header class="strip is-intro" data-intro>
+    <a class="strip__home" href={url('/v/silk/')} aria-label="Swathi, back to the top" data-logo>
       <Logo weave />
     </a>
     <nav class="strip__nav" aria-label="Sections">
-      <a class="tab" href="#work">Work</a>
-      <a class="tab" href="#about">About</a>
-      <a class="tab" href="#contact">Contact</a>
+      <a class="tab" href="#work" style="--i:0">Work</a>
+      <a class="tab" href="#about" style="--i:1">About</a>
+      <a class="tab" href="#contact" style="--i:2">Contact</a>
     </nav>
     <i class="strip__zari" aria-hidden="true"></i>
   </header>
 
   <main id="main">
     <div class="shop">
-      <section class="silk silk--hero" aria-labelledby="hero-title" data-silk>
+      <section class="silk silk--hero is-intro" aria-labelledby="hero-title" data-silk data-intro data-hero>
         <i class="butta" aria-hidden="true"></i>
+        <i class="glint" aria-hidden="true"></i>
         <Korvai weave />
         <div class="silk__body">
           {/* Each line is woven in on load: the real words stay underneath, a copy is wiped in over them. */}
@@ -90,14 +92,14 @@ const description = site.seo.description;
         <i class="edge" aria-hidden="true"><i class="edge__teeth"></i><i class="edge__line"></i></i>
 
         <section class="work" id="work" aria-labelledby="work-title">
-          <div class="work__head">
+          <div class="work__head" data-weave>
             <h2 id="work-title">Five live sites</h2>
             <p>All five are live. Open any of them on your phone and try it.</p>
             <nav class="ledger" aria-label="The five sites">
               <ol>
                 {
                   work.map((w, i) => (
-                    <li>
+                    <li style={`--i:${i}`}>
                       <a class="tab tab--ledger" href={`#work-${w.id}`} data-ledger={w.id}>
                         <span class="tab__num">{i + 1}</span>
                         <span>{w.data.title}</span>
@@ -127,12 +129,12 @@ const description = site.seo.description;
           <div class="weaves__list">
             {
               site.services.map((s) => (
-                <article class="weave">
+                <article class="weave" data-weave>
                   <h3>{s.name}</h3>
                   <p>{s.summary}</p>
                   <ul class="weave__items">
-                    {s.items.map((item) => (
-                      <li>{item}</li>
+                    {s.items.map((item, i) => (
+                      <li style={`--i:${i}`}>{item}</li>
                     ))}
                   </ul>
                 </article>
@@ -145,7 +147,8 @@ const description = site.seo.description;
           <div class="sec-head">
             <h2 id="process-title">How a project goes</h2>
           </div>
-          <ol class="steps__list">
+          {/* The thread joining the steps is drawn down as you scroll; each marker is stitched as it is reached. */}
+          <ol class="steps__list" data-thread>
             {
               site.process.map((s, i) => (
                 <li class="step">
@@ -160,7 +163,7 @@ const description = site.seo.description;
       </div>
     </div>
 
-    <section class="silk silk--about" id="about" aria-labelledby="about-title" data-silk>
+    <section class="silk silk--about" id="about" aria-labelledby="about-title" data-silk data-weave>
       <i class="butta" aria-hidden="true"></i>
       <Korvai />
       <div class="silk__body about">
@@ -171,31 +174,37 @@ const description = site.seo.description;
             widths={[320, 480, 640, 960]}
             sizes="(min-width: 1024px) 340px, (min-width: 768px) 300px, 70vw"
           />
+          {/* The double zari frame, traced round the photo; and the weft that parts to show it. */}
+          <span class="trace trace--outer" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="trace trace--inner" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="weft-wipe" aria-hidden="true">
+            {Array.from({ length: 8 }, (_, i) => <i style={`--i:${i}`} />)}
+          </span>
         </figure>
         <div class="about__text">
-          <h2 id="about-title"><span class="ta" lang="ta">வணக்கம்.</span> I’m Swathi.</h2>
+          <h2 id="about-title">
+            <span class="ta" lang="ta"
+              ><span class="ta__base">வணக்கம்.</span><span class="ta__ink" aria-hidden="true">வணக்கம்.</span></span
+            > I’m Swathi.
+          </h2>
           {site.about.paragraphs.map((para) => <p>{para}</p>)}
           <ul class="tools" aria-label="What I build with">
-            {site.about.tools.map((t) => <li>{t}</li>)}
+            {site.about.tools.map((t, i) => <li style={`--i:${i}`}>{t}</li>)}
           </ul>
         </div>
       </div>
     </section>
 
     <section class="pallu" id="contact" aria-labelledby="contact-title">
-      <div class="pallu__band" aria-hidden="true">
-        <i class="pb pb--lines"></i>
-        <i class="pb pb--teeth-down"></i>
-        <i class="pb pb--beads"></i>
-        <i class="pb pb--stripe"></i>
-        <i class="pb pb--mangai"></i>
-        <i class="pb pb--stripe"></i>
-        <i class="pb pb--diamonds"></i>
-        <i class="pb pb--pettu"></i>
-        <i class="pb pb--teeth-up"></i>
-        <i class="pb pb--lines"></i>
+      {/* As each part of the pallu comes into view its rows are woven in from the centre, one after another. */}
+      <div class="pallu__band" aria-hidden="true" data-weave>
+        {
+          ['lines', 'teeth-down', 'beads', 'stripe', 'mangai', 'stripe', 'diamonds', 'pettu', 'teeth-up', 'lines'].map(
+            (row, i) => <i class={`pb pb--${row}`} style={`--i:${i}`} />,
+          )
+        }
       </div>
-      <div class="pallu__field">
+      <div class="pallu__field" data-weave>
         <div class="pallu__panel">
           <h2 id="contact-title">{site.contact.heading}</h2>
           <p>{site.contact.text}</p>
@@ -207,19 +216,17 @@ const description = site.seo.description;
           <p class="act__handle">{ig.display}</p>
         </div>
       </div>
-      <div class="pallu__band pallu__band--end" aria-hidden="true">
-        <i class="pb pb--lines"></i>
-        <i class="pb pb--teeth-down"></i>
-        <i class="pb pb--pettu"></i>
-        <i class="pb pb--mangai pb--mangai-flip"></i>
-        <i class="pb pb--stripe"></i>
-        <i class="pb pb--beads"></i>
-        <i class="pb pb--lines"></i>
+      <div class="pallu__band pallu__band--end" aria-hidden="true" data-weave>
+        {
+          ['lines', 'teeth-down', 'pettu', 'mangai pb--mangai-flip', 'stripe', 'beads', 'lines'].map((row, i) => (
+            <i class={`pb pb--${row}`} style={`--i:${i}`} />
+          ))
+        }
       </div>
     </section>
   </main>
 
-  <footer class="foot">
+  <footer class="foot" data-weave>
     <i class="tassels" aria-hidden="true"></i>
     <div class="foot__row">
       <Logo class="logo--ink" />

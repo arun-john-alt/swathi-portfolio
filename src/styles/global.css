@@ -294,16 +294,12 @@ a {
   border-radius: 3px;
 }
 
-/* ---------- Scroll reveal (only with JS and when motion is welcome) ---------- */
+/* ---------- Motion ----------
+   Section moments live with their components and start when site.ts marks a [data-enter]
+   element .is-in. Their hidden starting states only apply under html.motion, which the script
+   sets when IntersectionObserver exists and reduced motion is off. */
 
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
-    transition:
-      opacity 360ms var(--ease-out),
-      transform 360ms var(--ease-out);
-  }
-  .js [data-reveal]:not(.is-in) {
-    opacity: 0;
-    transform: translateY(14px);
-  }
+:root {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-drag: cubic-bezier(0.65, 0, 0.35, 1);
 }

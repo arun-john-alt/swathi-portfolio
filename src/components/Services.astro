@@ -11,20 +11,20 @@ import { isPlaceholderText, placeholderLabel } from '../lib/placeholder';
 
   <div class="services">
     {
-      site.services.map((s) =>
+      site.services.map((s, i) =>
         isPlaceholderText(s.name) ? (
           <div class="service service--ph">
             <span class="ph-tag">Placeholder</span>
             <p>{placeholderLabel(s.name)}</p>
           </div>
         ) : (
-          <article class="service">
+          <article class="service" data-enter style={`--i:${i}`}>
             <h3>{s.name}</h3>
             <p class="service__summary">{s.summary}</p>
             {s.items.length > 0 && (
               <ul class="service__list">
-                {s.items.map((item) => (
-                  <li>{item}</li>
+                {s.items.map((item, j) => (
+                  <li style={`--j:${j}`}>{item}</li>
                 ))}
               </ul>
             )}
@@ -42,8 +42,20 @@ import { isPlaceholderText, placeholderLabel } from '../lib/placeholder';
   }
 
   .service {
-    border-top: 2px solid var(--ink);
+    --d: 0ms; /* desktop staggers the three side by side */
+    position: relative;
     padding-top: 16px;
+  }
+  /* The heavy rule on top, a separate line so it can be drawn. */
+  .service:not(.service--ph)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ink);
+    transform-origin: left;
   }
 
   .service h3 {
@@ -103,6 +115,50 @@ import { isPlaceholderText, placeholderLabel } from '../lib/placeholder';
     .services {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       column-gap: clamp(32px, 3.5vw, 56px);
+    }
+  }
+  @media (min-width: 800px) {
+    .service {
+      --d: calc(var(--i, 0) * 140ms);
+    }
+  }
+
+  /* ---------- As each service enters: its rule is drawn, then its list is set item by item ---------- */
+
+  :global(.motion) .service:not(:global(.is-in))::before {
+    transform: scaleX(0);
+  }
+  :global(.motion) .service:not(:global(.is-in)) .service__list li {
+    opacity: 0;
+  }
+
+  :global(.motion) .service:global(.is-in)::before {
+    animation: rule-draw 640ms var(--ease-expo) var(--d) backwards;
+  }
+  :global(.motion) .service:global(.is-in) .service__list li {
+    animation: item-set 420ms var(--ease-expo) backwards;
+    animation-delay: calc(var(--d) + 320ms + var(--j, 0) * 70ms);
+  }
+  :global(.motion) .service:global(.is-in) .service__list li::before {
+    display: inline-block;
+    animation: plus-set 360ms var(--ease-expo) backwards;
+    animation-delay: calc(var(--d) + 320ms + var(--j, 0) * 70ms);
+  }
+
+  @keyframes rule-draw {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes item-set {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+  }
+  @keyframes plus-set {
+    from {
+      transform: rotate(-90deg) scale(0.4);
     }
   }
 </style>

@@ -14,4 +14,6 @@ const letters = raw
 <span class="glogo">
   <Fragment set:html={letters} />
   <span class="glogo__dot" aria-hidden="true"></span>
+  {/* A second light behind the dot, for the hover backlight (kept apart from the opening's own). */}
+  <span class="glogo__flare" aria-hidden="true"></span>
 </span>

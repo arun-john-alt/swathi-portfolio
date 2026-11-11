@@ -11,7 +11,7 @@ import Frame from './Frame.astro';
   <ol class="steps">
     {
       site.process.map((step, i) => (
-        <li class="step">
+        <li class="step" data-enter style={`--i:${i}`}>
           <span class="step__num mono">{String(i + 1).padStart(2, '0')}</span>
           <h3>{step.name}</h3>
           <p>{step.text}</p>
@@ -107,6 +107,73 @@ import Frame from './Frame.astro';
     .step h3 {
       margin-top: 18px;
       min-height: 0;
+    }
+  }
+
+  /* ---------- As each step enters: its box is selected (a blue flash), its words settle, and
+     the line to the next step is drawn. Phones play it step by step as you scroll; on desktop
+     the four enter together, so they play left to right. ---------- */
+
+  .step {
+    --d: 0ms;
+  }
+  .step::before {
+    transform-origin: top;
+  }
+  @media (min-width: 800px) {
+    .step {
+      --d: calc(var(--i, 0) * 260ms);
+    }
+    .step::before {
+      transform-origin: left;
+    }
+  }
+
+  :global(.motion) .step:not(:global(.is-in))::before {
+    transform: scale(0);
+  }
+  :global(.motion) .step:not(:global(.is-in)) .step__num,
+  :global(.motion) .step:not(:global(.is-in)) h3,
+  :global(.motion) .step:not(:global(.is-in)) p {
+    opacity: 0;
+  }
+
+  :global(.motion) .step:global(.is-in) .step__num {
+    animation: num-select 700ms var(--ease-expo) var(--d) backwards;
+  }
+  :global(.motion) .step:global(.is-in) h3,
+  :global(.motion) .step:global(.is-in) p {
+    animation: step-text 520ms var(--ease-expo) backwards;
+    animation-delay: calc(var(--d) + 140ms);
+  }
+  :global(.motion) .step:global(.is-in)::before {
+    animation: line-draw 560ms var(--ease-drag) backwards;
+    animation-delay: calc(var(--d) + 260ms);
+  }
+
+  @keyframes num-select {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+      border-color: var(--select);
+      box-shadow: 0 0 0 3px var(--select-soft);
+    }
+    45% {
+      opacity: 1;
+      transform: none;
+      border-color: var(--select);
+      box-shadow: 0 0 0 3px var(--select-soft);
+    }
+  }
+  @keyframes step-text {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes line-draw {
+    from {
+      transform: scale(0);
     }
   }
 </style>

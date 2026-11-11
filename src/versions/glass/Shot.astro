@@ -25,5 +25,9 @@ const loading = eager ? 'eager' : 'lazy';
 <span class="shot" style={pos ? `--pos:${pos}` : undefined}>
   <Image class="shot__seed" src={src} width={seed} alt="" aria-hidden="true" loading={loading} decoding="async" />
   <Image class="shot__sharp" src={src} widths={widths} sizes={sizes} alt={alt} loading={loading} decoding="async" />
+  {/* A lamp behind the glass that follows a mouse pointer (desktop only), and the glint that
+      crosses the glass as the pane lights. */}
+  <span class="shot__light" aria-hidden="true"></span>
   <span class="shot__glass" aria-hidden="true"></span>
+  <span class="glint" aria-hidden="true"></span>
 </span>
