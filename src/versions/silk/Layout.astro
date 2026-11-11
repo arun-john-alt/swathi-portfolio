@@ -1,0 +1,52 @@
+---
+// The Silk version's own page shell: its fonts, its stylesheet and its one script.
+// It shares nothing with the current site's layout, so the two worlds can be compared side by side.
+import '@fontsource/rozha-one/400.css';
+import '@fontsource-variable/catamaran';
+import rozhaLatin from '@fontsource/rozha-one/files/rozha-one-latin-400-normal.woff2?url';
+import './silk.css';
+import { url } from '../../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* Versions are drafts for the owner to choose from, so search engines are asked to skip them. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#05262b" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    {/* The headline face is on the first screen, so it is fetched before the stylesheet asks for it. */}
+    <link rel="preload" href={rozhaLatin} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // Before the first paint: say JavaScript is on, and whether the sarees may start folded.
+      // If the page script never arrives, the watchdog lays everything flat again, so no work stays hidden.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js-fold');
+        setTimeout(function () {
+          if (!window.__silkReady) d.classList.remove('js-fold');
+        }, 3000);
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+    <script>
+      import './silk.ts';
+    </script>
+  </body>
+</html>

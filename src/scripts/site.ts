@@ -46,6 +46,11 @@ function setupHero() {
 
   const range = document.createRange();
   range.selectNodeContents(h1);
+  let size = { w: 0, h: 0 };
+  let counting = false;
+  const show = (w: number, h: number) => {
+    if (dims) dims.textContent = `${w} × ${h}`;
+  };
 
   const update = () => {
     const r = h1.getBoundingClientRect();
@@ -53,12 +58,38 @@ function setupHero() {
     const lines = Array.from(range.getClientRects());
     const hug = Math.ceil(lines.length ? Math.max(...lines.map((l) => l.right)) - r.left : r.width);
     sel.style.setProperty('--hug', `${hug}px`);
-    if (dims) dims.textContent = `${hug} × ${Math.round(r.height)}`;
+    size = { w: hug, h: Math.round(r.height) };
+    if (!counting) show(size.w, size.h);
   };
 
   update();
   new ResizeObserver(update).observe(h1);
   document.fonts?.ready.then(update);
+
+  // When the chip appears in the opening, its numbers count up to the measurement, like a
+  // design tool reading out a layer being drawn.
+  if (dims && !reduceMotion) {
+    dims.addEventListener(
+      'animationstart',
+      () => {
+        counting = true;
+        const start = performance.now();
+        const dur = 420;
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / dur);
+          const e = 1 - Math.pow(1 - t, 3);
+          show(Math.round(size.w * e), Math.round(size.h * e));
+          if (t < 1) requestAnimationFrame(tick);
+          else {
+            counting = false;
+            show(size.w, size.h);
+          }
+        };
+        requestAnimationFrame(tick);
+      },
+      { once: true },
+    );
+  }
 }
 
 /* ---------- Hero reel: plays while on screen, never for people who asked for less motion ---------- */

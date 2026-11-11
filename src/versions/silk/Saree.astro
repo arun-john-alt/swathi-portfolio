@@ -1,0 +1,107 @@
+---
+// One live project, shown the way every project is shown: the desktop screenshot as a cloth that unfolds
+// on the counter, its phone view swinging round in front, and its border (the hem) taking the client's colour.
+// Without JavaScript, or with reduced motion, it simply lies flat.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  index: number;
+  total: number;
+  brand: string;
+  ink: string;
+  first?: boolean;
+}
+const { entry, index, total, brand, ink, first = false } = Astro.props;
+const p = entry.data;
+const host = p.live ? new URL(p.live).hostname.replace(/^www\./, '') : '';
+const loading = first ? 'eager' : 'lazy';
+// On wide screens the first saree sits beside the silk; the rest lie wider across the counter.
+const deskSizes = `(min-width: 1024px) ${first ? '40vw' : '58vw'}, (min-width: 768px) 640px, 88vw`;
+---
+
+<article
+  class:list={['saree', { 'saree--first': first }]}
+  id={`work-${entry.id}`}
+  data-saree
+  data-brand={brand}
+  style={`--brand:${brand};--brand-ink:${ink}`}
+  aria-labelledby={`title-${entry.id}`}
+>
+  <div class="saree__stage">
+    <div class="sheet">
+      <div class="sheet__half">
+        {
+          p.desktop && (
+            <Image
+              src={p.desktop}
+              alt={`${p.title}'s live site on a desktop screen`}
+              widths={[480, 720, 960, 1200, 1440]}
+              sizes={deskSizes}
+              loading={loading}
+              fetchpriority={first ? 'high' : 'auto'}
+            />
+          )
+        }
+      </div>
+      <div class="sheet__flap">
+        <div class="sheet__face sheet__face--front">
+          {
+            p.desktop && (
+              <Image
+                src={p.desktop}
+                alt=""
+                aria-hidden="true"
+                widths={[480, 720, 960, 1200, 1440]}
+                sizes={deskSizes}
+                loading={loading}
+              />
+            )
+          }
+        </div>
+        <div class="sheet__face sheet__face--back" aria-hidden="true">
+          <i class="sheet__fold-border"></i>
+          <span class="sheet__fold-title">{p.title}</span>
+          <span class="sheet__fold-type">{p.type}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hem">
+      <span class="hem__fill">
+        <span class="hem__num">{index} of {total}</span>
+        <span class="hem__type">{p.type}</span>
+      </span>
+    </div>
+
+    {
+      p.phone && (
+        <figure class="handset">
+          <Image
+            src={p.phone}
+            alt={`${p.title}'s live site on a phone`}
+            widths={[160, 240, 320, 400]}
+            sizes="(min-width: 1024px) 160px, (min-width: 768px) 180px, 26vw"
+            loading={loading}
+          />
+        </figure>
+      )
+    }
+  </div>
+
+  <div class="saree__text">
+    <h3 id={`title-${entry.id}`}>{p.title}</h3>
+    <p>{p.summary}</p>
+    {
+      p.live && (
+        <a class="tab tab--out" href={p.live} target="_blank" rel="noopener">
+          <span>Visit {host}</span>
+          <Icon name="out" />
+          <span class="sr">(opens the live site in a new tab)</span>
+        </a>
+      )
+    }
+  </div>
+</article>

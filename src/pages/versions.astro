@@ -1,0 +1,109 @@
+---
+// A page for the owner to compare the design versions side by side and pick one. Not linked from the site.
+import Base from '../layouts/Base.astro';
+import Frame from '../components/Frame.astro';
+import { url } from '../lib/url';
+
+const versions = [
+  {
+    name: 'Frame to live',
+    href: url('/'),
+    status: 'Current site',
+    idea: 'The page is a design tool’s canvas: white artboards on grey, the headline drawn as a selected layer with its live size, and a phone playing the concept-site reel.',
+    motion: 'The logo starts selected and collapses into its blue dot; the headline rises word by word, then a marquee is dragged around it and its size counts up.',
+  },
+  {
+    name: 'Silk',
+    href: url('/v/silk/'),
+    status: 'New (impeccable)',
+    idea: 'A Kanjivaram silk on a silk-house counter: peacock-blue body, rani-pink border with temple teeth, gold zari, her live sites unfolded one by one like sarees shown to a customer.',
+    motion: 'The zari threads weave across the border on load and the temple teeth interlock; each project unfolds as you scroll and the counter takes its colours.',
+  },
+  {
+    name: 'Glass',
+    href: url('/v/glass/'),
+    status: 'New (impeccable)',
+    idea: 'One steel-framed glass wall, like the front of a modern showroom: each live site is a pane you look through, and the single cobalt pane is the way to message her.',
+    motion: 'The wall starts almost clear and the panes brighten one after another until the cobalt pane lights up; as you scroll, the pane in the middle of the screen lights and its site comes through sharp.',
+  },
+];
+---
+
+<Base title="Choose a version · Swathi" description="Design versions of Swathi's portfolio to compare." headerBase={url('/')}>
+  <Frame id="top" name="Versions" meta={`${versions.length} to compare`} labelledby="versions-title" reveal={false}>
+    <h1 id="versions-title" class="v-title">Pick the version you like</h1>
+    <p class="v-lead">Open each one on your phone first: that is where most people will see it. The five projects are the same in all three.</p>
+
+    <ol class="v-list">
+      {
+        versions.map((v) => (
+          <li class="v-item">
+            <p class="v-status mono">{v.status}</p>
+            <h2>{v.name}</h2>
+            <p>{v.idea}</p>
+            <p class="v-motion"><span class="mono">Motion</span> {v.motion}</p>
+            <a class="btn btn--primary" href={v.href}>Open {v.name}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </Frame>
+</Base>
+
+<style>
+  .v-title {
+    font-size: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .v-lead {
+    margin-top: 14px;
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+  .v-list {
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    border-top: 2px solid var(--ink);
+  }
+  .v-item {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    padding: 24px 0 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .v-status {
+    color: var(--muted);
+  }
+  .v-item h2 {
+    font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+    font-weight: 700;
+  }
+  .v-item p {
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+  .v-motion .mono {
+    color: var(--muted);
+    margin-right: 6px;
+  }
+  .v-item .btn {
+    margin-top: 8px;
+  }
+  @media (min-width: 1024px) {
+    .v-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 48px;
+      border-top: 0;
+    }
+    .v-item {
+      border-top: 2px solid var(--ink);
+      border-bottom: 0;
+      align-content: start;
+    }
+  }
+</style>

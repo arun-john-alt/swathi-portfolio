@@ -1,0 +1,38 @@
+---
+// The korvai border down the left of the silk: rani-pink ground, zari threads in groups, and the row of
+// temple teeth (gopurams) where the border interlocks with the peacock body.
+// With `weave`, the threads are drawn across the border one after another on load and the teeth bite in.
+interface Props {
+  weave?: boolean;
+}
+const { weave = false } = Astro.props;
+
+// Each thread group: where it sits across the border (as a share of its width), how wide, and what is woven.
+// The narrow set is for phones; the wide set for the broad band on bigger screens.
+const narrow = [
+  { kind: 'lines', x: 7, w: 10 },
+  { kind: 'pettu', x: 24, w: 24 },
+  { kind: 'beads', x: 53, w: 18 },
+  { kind: 'lines', x: 79, w: 8 },
+];
+const wide = [
+  { kind: 'lines', x: 4, w: 4 },
+  { kind: 'pettu', x: 12, w: 17 },
+  { kind: 'beads', x: 33, w: 9 },
+  { kind: 'pettu', x: 46, w: 12 },
+  { kind: 'diamonds', x: 62, w: 11 },
+  { kind: 'pettu', x: 77, w: 8 },
+  { kind: 'lines', x: 90, w: 4 },
+];
+---
+
+<div class:list={['korvai', { 'korvai--weave': weave }]} aria-hidden="true">
+  <i class="korvai__teeth"></i>
+  <i class="korvai__line"></i>
+  <span class="korvai__set korvai__set--narrow">
+    {narrow.map((t, i) => <i class={`thr thr--${t.kind}`} style={`--x:${t.x}%;--w:${t.w}%;--i:${i}`} />)}
+  </span>
+  <span class="korvai__set korvai__set--wide">
+    {wide.map((t, i) => <i class={`thr thr--${t.kind}`} style={`--x:${t.x}%;--w:${t.w}%;--i:${i}`} />)}
+  </span>
+</div>

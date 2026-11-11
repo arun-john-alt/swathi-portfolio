@@ -1,0 +1,29 @@
+---
+// A live-site screenshot behind a pane of seeded glass.
+// Three layers: a tiny copy of the screenshot (what you make out through seeded glass), the sharp
+// screenshot on top, and the glass itself in front. At rest (with JavaScript) the sharp layer is
+// hidden and the glass is white and seeded; when the pane is lit, the glass clears and the sharp
+// screenshot comes through. Without JavaScript the pane is simply clear.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths: number[];
+  sizes: string;
+  eager?: boolean;
+  /** object-position for the crop, e.g. "50% 28%" */
+  pos?: string;
+  /** width of the small copy seen through the glass: smaller is hazier */
+  seed?: number;
+}
+const { src, alt, widths, sizes, eager = false, pos, seed = 96 } = Astro.props;
+const loading = eager ? 'eager' : 'lazy';
+---
+
+<span class="shot" style={pos ? `--pos:${pos}` : undefined}>
+  <Image class="shot__seed" src={src} width={seed} alt="" aria-hidden="true" loading={loading} decoding="async" />
+  <Image class="shot__sharp" src={src} widths={widths} sizes={sizes} alt={alt} loading={loading} decoding="async" />
+  <span class="shot__glass" aria-hidden="true"></span>
+</span>

@@ -1,0 +1,49 @@
+---
+// The Glass version's own page shell: its fonts, its stylesheet and its one script.
+// It shares nothing with the current site's layout, so the two worlds never mix.
+import '@fontsource-variable/sofia-sans-extra-condensed';
+import '@fontsource-variable/sofia-sans';
+import './glass.css';
+import { url } from '../../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const ogImage = Astro.site ? new URL(url('/og.png'), Astro.site).href : null;
+// The glass relief tiles live in public/v/glass; their addresses depend on the base path.
+const tiles = ['seeded', 'rolled', 'bubbled']
+  .map((n) => `--t-${n}:url("${url(`/v/glass/${n}.webp`)}");`)
+  .join('');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* A design version to choose from, not the live site: keep it out of search results. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#111213" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <link rel="preload" href={url('/v/glass/seeded.webp')} as="image" type="image/webp" />
+    <style is:inline set:html={`:root{${tiles}}`}></style>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import './glass.ts';
+    </script>
+  </body>
+</html>

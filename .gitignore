@@ -7,3 +7,6 @@ Thumbs.db
 
 # Original photos dropped in the folder: the one used on the site lives in src/assets/about/
 /WhatsApp Image*
+
+# impeccable working captures (screenshots, filmstrips)
+.impeccable/review/

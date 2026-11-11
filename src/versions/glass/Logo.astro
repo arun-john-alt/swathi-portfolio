@@ -1,0 +1,17 @@
+---
+// The "swathi" wordmark with its blue square turned into a real cobalt pane: the letters come
+// from the brand SVG, the square is drawn as a tiny framed piece of cobalt glass that lights up
+// with the wall's other cobalt panes.
+import raw from '../../assets/logo-inline.svg?raw';
+
+const letters = raw
+  .replace(/<rect[^>]*\/>/, '')
+  .replace(/<title>.*?<\/title>/, '')
+  .replace(/<svg class="logo"/, '<svg class="glogo__svg" aria-hidden="true" focusable="false"')
+  .replace(/ role="img" aria-label="Swathi"/, '');
+---
+
+<span class="glogo">
+  <Fragment set:html={letters} />
+  <span class="glogo__dot" aria-hidden="true"></span>
+</span>

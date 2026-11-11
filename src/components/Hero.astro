@@ -3,17 +3,28 @@ import site from '../data/site.json';
 import reel from '../data/reel.json';
 import { url } from '../lib/url';
 import Frame from './Frame.astro';
+
+// Each word sits in its own mask so the headline can rise in line by line.
+const words = site.headline.split(/\s+/);
 ---
 
 <Frame id="top" name="Hero" labelledby="hero-title" reveal={false} class="hero-frame">
   <span slot="meta" class="frame__meta bp"></span>
 
   <div class="hero">
-    <p class="hero__eyebrow mono">{site.eyebrow}</p>
-
     <!-- The headline is drawn as a selected layer: outline, corner handles and its live size. -->
     <div class="sel" data-sel>
-      <h1 id="hero-title">{site.headline}</h1>
+      <h1 id="hero-title">
+        {
+          words.map((w, i) => (
+            <>
+              <span class="w">
+                <span style={`--w:${i}`}>{w}</span>
+              </span>{' '}
+            </>
+          ))
+        }
+      </h1>
       <span class="sel__box" aria-hidden="true">
         <i class="sel__h sel__h--tl"></i><i class="sel__h sel__h--tr"></i>
         <i class="sel__h sel__h--bl"></i><i class="sel__h sel__h--br"></i>
@@ -26,7 +37,10 @@ import Frame from './Frame.astro';
     <!-- The reel: a phone screen running through the concept sites, one second each. -->
     <figure class="reel" data-reel data-seg={reel.seconds} data-count={reel.count}>
       <div class="reel__label mono">
-        <span><span aria-hidden="true">▶</span> {reel.label}</span>
+        <span class="reel__name">
+          <svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 1l7 4-7 4z" fill="currentColor"></path></svg>
+          {reel.label}
+        </span>
         <span class="reel__count" data-reel-count aria-hidden="true">01 / {String(reel.count).padStart(2, '0')}</span>
       </div>
       <div class="reel__screen">
@@ -77,7 +91,7 @@ import Frame from './Frame.astro';
     }
   }
 
-  /* Phones: eyebrow, headline, reel, intro, buttons. Wide screens: the reel gets its own column. */
+  /* Phones: headline, reel, intro, buttons. Wide screens: the reel gets its own column. */
   .hero {
     /* The outline sits on the headline's own box (as a design tool draws a text layer),
        so the size chip and the outline always agree. */
@@ -86,17 +100,11 @@ import Frame from './Frame.astro';
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'eyebrow'
       'sel'
       'reel'
       'intro'
       'actions';
-  }
-
-  .hero__eyebrow {
-    grid-area: eyebrow;
-    color: var(--ink-2);
-    margin-bottom: 26px;
+    padding-top: 8px;
   }
 
   .sel {
@@ -110,6 +118,18 @@ import Frame from './Frame.astro';
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1;
+  }
+
+  /* Each word is a mask; the word inside rises into it. Room below for descenders (g, y, p). */
+  .w {
+    display: inline-block;
+    vertical-align: top;
+    overflow: clip;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+  }
+  .w > span {
+    display: inline-block;
   }
   @media (min-width: 600px) {
     .sel h1 {
@@ -298,9 +318,8 @@ import Frame from './Frame.astro';
   @media (min-width: 1024px) {
     .hero {
       grid-template-columns: minmax(0, 1fr) 300px;
-      grid-template-rows: auto auto auto auto 1fr;
+      grid-template-rows: auto auto auto 1fr;
       grid-template-areas:
-        'eyebrow reel'
         'sel reel'
         'intro reel'
         'actions reel'
@@ -323,39 +342,92 @@ import Frame from './Frame.astro';
     }
   }
 
-  /* The selection draws itself once on load. */
+  /*
+    The opening, played once: the words rise into place line by line, then the headline is
+    selected the way a designer selects a layer, a marquee dragged from its top-left corner,
+    the handles snap on, the size chip counts up to the real measurement (site.ts) and the
+    spacing redline drops to the next element. Then the reel, intro and buttons settle in.
+  */
   @media (prefers-reduced-motion: no-preference) {
+    .w > span {
+      animation: word-rise 640ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+      animation-delay: calc(120ms + var(--w) * 38ms);
+    }
     :global(.js) .sel__box {
-      animation: sel-in 280ms var(--ease-out) 150ms both;
+      animation: marquee 440ms cubic-bezier(0.65, 0, 0.35, 1) 640ms backwards;
     }
     :global(.js) .sel__h {
-      animation: handle-in 220ms var(--ease-out) both;
+      animation: handle-in 220ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
     }
     :global(.js) .sel__h--tl {
-      animation-delay: 330ms;
+      animation-delay: 1040ms;
     }
     :global(.js) .sel__h--tr {
-      animation-delay: 370ms;
-    }
-    :global(.js) .sel__h--br {
-      animation-delay: 410ms;
+      animation-delay: 1070ms;
     }
     :global(.js) .sel__h--bl {
-      animation-delay: 450ms;
+      animation-delay: 1100ms;
+    }
+    :global(.js) .sel__h--br {
+      animation-delay: 1130ms;
     }
     :global(.js) .sel__dims {
-      animation: fade-in 240ms var(--ease-out) 480ms both;
+      animation: chip-in 260ms cubic-bezier(0.16, 1, 0.3, 1) 1080ms backwards;
     }
     :global(.js) .redline {
       transform-origin: top;
-      animation: draw-down 320ms var(--ease-out) 560ms both;
+      animation: draw-down 340ms cubic-bezier(0.16, 1, 0.3, 1) 1240ms backwards;
+    }
+    .reel {
+      animation: settle 760ms cubic-bezier(0.16, 1, 0.3, 1) 420ms backwards;
+    }
+    .hero__intro {
+      animation: settle 560ms cubic-bezier(0.16, 1, 0.3, 1) 980ms backwards;
+    }
+    .hero__actions {
+      animation: settle 560ms cubic-bezier(0.16, 1, 0.3, 1) 1060ms backwards;
     }
   }
 
-  @keyframes sel-in {
+  /* Less motion asked for: no movement, the selection simply fades in. */
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .sel__box,
+    :global(.js) .sel__dims,
+    :global(.js) .redline {
+      animation: fade-in 300ms ease-out 200ms backwards;
+    }
+  }
+
+  /* Starts fully below the mask, past its descender room, so nothing peeks before it rises. */
+  @keyframes word-rise {
+    from {
+      transform: translateY(130%);
+    }
+  }
+
+  /* A marquee drag: the outline grows from the top-left corner to the headline's full size. */
+  @keyframes marquee {
+    0% {
+      width: 0;
+      bottom: 100%;
+      opacity: 0;
+    }
+    2% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes chip-in {
     from {
       opacity: 0;
-      transform: scale(0.985);
+      translate: -50% -6px;
+    }
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
     }
   }
   @keyframes handle-in {

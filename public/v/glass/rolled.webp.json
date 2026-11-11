@@ -1,0 +1,4 @@
+{
+  "prompt": "﻿Hand-rolled clear glass relief tile. Height: ridged isotropic band noise (26-70 px) minus its absolute value for crinkles, plus a 70-220 px swell and light 9 px hammering; seed 2202; 90 small seeds. No fixed direction, so it never reads as water streaks. Procedurally generated, no image model and no source photograph. Script: C:\\Users\\aj\\AppData\\Local\\Temp\\claude\\feb098b1c42f88f3\\a5ba9f20-9267-4976-9380-0d1752cbcce9\\scratchpad\\glass-tiles\\make_tiles.py (numpy + scipy). Seamless 840x840 grey relief map, mid grey = flat glass, shown at 420 CSS px and laid over a glass colour with a CSS blend mode in the Glass version of Swathi's portfolio (src/versions/glass/glass.css). Height field is lit as a normal map from the upper left (diffuse + Blinn specular). Periodic Worley cells, FFT band-limited noise and wrapped drawing keep it tileable.\r\n",
+  "createdAt": "2026-11-11T03:32:06.977Z"
+}

@@ -8,6 +8,20 @@ The idea ("Frame to live"): the page looks like a design tool's canvas. Each sec
 
 **The words** were written on 11 Nov 2026 from what her projects show (no invented clients, numbers or quotes). Swathi should read them once and change anything she wouldn't say that way; they all live in `src/data/site.json`. Her WhatsApp number and email aren't in yet, so those contact rows stay hidden until they are. While `"draft": true` is set in `site.json`, the site asks search engines not to list it.
 
+## Design versions (to choose from)
+
+Three versions of the home page live side by side, with the same five projects:
+
+| Version | Address | Idea |
+|---|---|---|
+| Frame to live (current) | `/` | a design tool's canvas; the headline drawn as a selected layer; the concept-site reel |
+| Silk | `/v/silk/` | a Kanjivaram silk on a silk-house counter; projects unfold like sarees |
+| Glass | `/v/glass/` | one steel-framed glass wall; each project is a pane, the cobalt pane is the way to message her |
+
+`/versions/` lists them with links. Silk and Glass were made with the impeccable design process: `PRODUCT.md` holds the product facts, and `.impeccable/surfaces/` holds each version's direction. Their code is in `src/versions/silk/` and `src/versions/glass/`, with their pages in `src/pages/v/`. The version pages are always hidden from search engines.
+
+Once one is chosen, it becomes the home page (its page moves to `src/pages/index.astro`), the other two are removed, and a `DESIGN.md` describing the chosen design is written.
+
 ## Run it on this laptop
 
 The laptop's own Node is too old, so use the portable Node 22 that sits in the Client Extractor folder. In PowerShell:

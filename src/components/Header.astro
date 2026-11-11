@@ -1,6 +1,5 @@
 ---
-import site from '../data/site.json';
-import { url } from '../lib/url';
+import Logo from './Logo.astro';
 
 interface Props {
   base?: string; // '' on the home page, '/' on inner pages so anchors point home
@@ -19,7 +18,7 @@ const links = [
   <div class="site-header__inner">
     <a class="wordmark" href={base || '#top'}>
       <!-- The logo: "swathi" with the i's dot drawn as a selection handle. Source files in brand/. -->
-      <img src={url('/logo.svg')} alt={site.name} width="94" height="26" />
+      <Logo intro />
     </a>
 
     <button
@@ -69,10 +68,8 @@ const links = [
     min-height: 44px;
     text-decoration: none;
   }
-  .wordmark img {
-    display: block;
-    height: 26px;
-    width: auto;
+  .wordmark {
+    color: var(--ink);
   }
 
   .menu-btn {

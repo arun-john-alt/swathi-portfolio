@@ -1,0 +1,232 @@
+---
+// Silk: the portfolio as a Kanjivaram silk on a silk-house counter. The peacock body and rani border
+// carry her words, her five live sites are unfolded on the white cotton counter one by one, and the
+// pallu at the end carries the message button. A draft version for the owner to choose from.
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Layout from '../../../versions/silk/Layout.astro';
+import Logo from '../../../versions/silk/Logo.astro';
+import Icon from '../../../versions/silk/Icon.astro';
+import Korvai from '../../../versions/silk/Korvai.astro';
+import Saree from '../../../versions/silk/Saree.astro';
+import site from '../../../data/site.json';
+import portrait from '../../../assets/about/swathi.jpg';
+import { url } from '../../../lib/url';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+
+// Each client's own colour, read off their live site's screenshot (the bar or button that carries the brand).
+// The ink is whichever of ivory or near-black reads on it.
+const brands: Record<string, { brand: string; ink: string }> = {
+  kattam: { brand: '#bd245c', ink: '#fff8f0' },
+  'tunic-closet': { brand: '#520100', ink: '#fff8f0' },
+  'vastara-the-label': { brand: '#4544e8', ink: '#fff8f0' },
+  '10x-healthy-skin': { brand: '#2464e0', ink: '#fff8f0' },
+  'rave-adventures': { brand: '#ff7232', ink: '#0d1a20' },
+};
+const fallback = { brand: '#c4145f', ink: '#fff8f0' };
+
+// The headline in its woven lines: four on a phone; the first two share a line on wider screens.
+const heroLines = ['Premium', 'sites,', 'built from', 'your design.'];
+
+const ig = site.contact.links.find((l) => l.label === 'Instagram')!;
+const title = 'Swathi · Web designer';
+const description = site.seo.description;
+---
+
+<Layout title={title} description={description}>
+  <header class="strip">
+    <a class="strip__home" href={url('/v/silk/')} aria-label="Swathi, back to the top">
+      <Logo weave />
+    </a>
+    <nav class="strip__nav" aria-label="Sections">
+      <a class="tab" href="#work">Work</a>
+      <a class="tab" href="#about">About</a>
+      <a class="tab" href="#contact">Contact</a>
+    </nav>
+    <i class="strip__zari" aria-hidden="true"></i>
+  </header>
+
+  <main id="main">
+    <div class="shop">
+      <section class="silk silk--hero" aria-labelledby="hero-title" data-silk>
+        <i class="butta" aria-hidden="true"></i>
+        <Korvai weave />
+        <div class="silk__body">
+          {/* Each line is woven in on load: the real words stay underneath, a copy is wiped in over them. */}
+          <h1 id="hero-title" class="weft-title">
+            {
+              heroLines.map((line, i) => (
+                <>
+                  <span class={`ln ln--${i}`} style={`--i:${i}`}>
+                    <span class="ln__base">{line}</span>
+                    <span class="ln__ink" aria-hidden="true">
+                      {line}
+                    </span>
+                    <i class="ln__shuttle" aria-hidden="true" />
+                  </span>{' '}
+                </>
+              ))
+            }
+          </h1>
+          <p class="lede">
+            I build Shopify stores, WordPress pages and hand-built websites from your finished design, and check every
+            page on a phone first.
+          </p>
+          <i class="weft" aria-hidden="true"></i>
+          <div class="act">
+            <a class="cta cta--weave" href={ig.url}>
+              <span class="cta__edge" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <Icon name="instagram" />
+              <span>Message me on Instagram</span>
+            </a>
+            <p class="act__handle">{ig.display}</p>
+          </div>
+        </div>
+        <i class="selvedge" aria-hidden="true"></i>
+      </section>
+
+      <div class="counter" data-counter>
+        <i class="edge" aria-hidden="true"><i class="edge__teeth"></i><i class="edge__line"></i></i>
+
+        <section class="work" id="work" aria-labelledby="work-title">
+          <div class="work__head">
+            <h2 id="work-title">Five live sites</h2>
+            <p>All five are live. Open any of them on your phone and try it.</p>
+            <nav class="ledger" aria-label="The five sites">
+              <ol>
+                {
+                  work.map((w, i) => (
+                    <li>
+                      <a class="tab tab--ledger" href={`#work-${w.id}`} data-ledger={w.id}>
+                        <span class="tab__num">{i + 1}</span>
+                        <span>{w.data.title}</span>
+                      </a>
+                    </li>
+                  ))
+                }
+              </ol>
+            </nav>
+          </div>
+          <div class="work__list">
+            {
+              work.map((w, i) => {
+                const b = brands[w.id] ?? fallback;
+                return (
+                  <Saree entry={w} index={i + 1} total={work.length} brand={b.brand} ink={b.ink} first={i === 0} />
+                );
+              })
+            }
+          </div>
+        </section>
+
+        <section class="weaves" id="services" aria-labelledby="services-title">
+          <div class="sec-head">
+            <h2 id="services-title">What I build</h2>
+          </div>
+          <div class="weaves__list">
+            {
+              site.services.map((s) => (
+                <article class="weave">
+                  <h3>{s.name}</h3>
+                  <p>{s.summary}</p>
+                  <ul class="weave__items">
+                    {s.items.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="steps" id="process" aria-labelledby="process-title">
+          <div class="sec-head">
+            <h2 id="process-title">How a project goes</h2>
+          </div>
+          <ol class="steps__list">
+            {
+              site.process.map((s, i) => (
+                <li class="step">
+                  <span class="step__num">{i + 1}</span>
+                  <h3>{s.name}</h3>
+                  <p>{s.text}</p>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+      </div>
+    </div>
+
+    <section class="silk silk--about" id="about" aria-labelledby="about-title" data-silk>
+      <i class="butta" aria-hidden="true"></i>
+      <Korvai />
+      <div class="silk__body about">
+        <figure class="portrait">
+          <Image
+            src={portrait}
+            alt="Swathi, standing on a terrace in a teal salwar with a pink border"
+            widths={[320, 480, 640, 960]}
+            sizes="(min-width: 1024px) 340px, (min-width: 768px) 300px, 70vw"
+          />
+        </figure>
+        <div class="about__text">
+          <h2 id="about-title"><span class="ta" lang="ta">வணக்கம்.</span> I’m Swathi.</h2>
+          {site.about.paragraphs.map((para) => <p>{para}</p>)}
+          <ul class="tools" aria-label="What I build with">
+            {site.about.tools.map((t) => <li>{t}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="pallu" id="contact" aria-labelledby="contact-title">
+      <div class="pallu__band" aria-hidden="true">
+        <i class="pb pb--lines"></i>
+        <i class="pb pb--teeth-down"></i>
+        <i class="pb pb--beads"></i>
+        <i class="pb pb--stripe"></i>
+        <i class="pb pb--mangai"></i>
+        <i class="pb pb--stripe"></i>
+        <i class="pb pb--diamonds"></i>
+        <i class="pb pb--pettu"></i>
+        <i class="pb pb--teeth-up"></i>
+        <i class="pb pb--lines"></i>
+      </div>
+      <div class="pallu__field">
+        <div class="pallu__panel">
+          <h2 id="contact-title">{site.contact.heading}</h2>
+          <p>{site.contact.text}</p>
+          <a class="cta cta--pallu" href={ig.url}>
+            <span class="cta__edge" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <Icon name="instagram" />
+            <span>Message me on Instagram</span>
+          </a>
+          <p class="act__handle">{ig.display}</p>
+        </div>
+      </div>
+      <div class="pallu__band pallu__band--end" aria-hidden="true">
+        <i class="pb pb--lines"></i>
+        <i class="pb pb--teeth-down"></i>
+        <i class="pb pb--pettu"></i>
+        <i class="pb pb--mangai pb--mangai-flip"></i>
+        <i class="pb pb--stripe"></i>
+        <i class="pb pb--beads"></i>
+        <i class="pb pb--lines"></i>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <i class="tassels" aria-hidden="true"></i>
+    <div class="foot__row">
+      <Logo class="logo--ink" />
+      <a class="tab" href={ig.url}>
+        <Icon name="instagram" />
+        <span>{ig.display}</span>
+      </a>
+    </div>
+  </footer>
+</Layout>

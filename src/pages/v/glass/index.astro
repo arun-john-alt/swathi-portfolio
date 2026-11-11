@@ -1,0 +1,291 @@
+---
+// Glass: the portfolio as one steel-framed glass partition wall. Black glazing bars are the only
+// lines; clear and seeded panes are the ground; cobalt is the way to message Swathi, amber is the
+// project in focus, oxblood is the close. Each live site is a pane you look through.
+import { getCollection } from 'astro:content';
+import site from '../../../data/site.json';
+import GlassLayout from '../../../versions/glass/GlassLayout.astro';
+import Logo from '../../../versions/glass/Logo.astro';
+import Icon from '../../../versions/glass/Icon.astro';
+import Shot from '../../../versions/glass/Shot.astro';
+import photo from '../../../assets/about/swathi.jpg';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const ig = site.contact.links.find((l) => l.label === 'Instagram')!;
+const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+const shopify = work.filter((e) => /shopify/i.test(e.data.type)).length;
+const wordpress = work.filter((e) => /wordpress/i.test(e.data.type)).length;
+const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'];
+const headline = 'I turn designs into Shopify stores and websites.'.split(' ');
+
+const nav = [
+  { href: '#work', label: 'Work' },
+  { href: '#services', label: 'What I build' },
+  { href: '#process', label: 'How I work' },
+  { href: '#about', label: 'About' },
+];
+---
+
+<GlassLayout title="Swathi · Web designer" description={site.seo.description}>
+  <a class="skip pane" href="#main">Skip to content</a>
+
+  <div class="wall" id="top">
+    <header class="rail">
+      <a class="pane pane--link rail__logo" href="#top" aria-label="Swathi, back to the top" data-seq style="--i:0">
+        <Logo />
+      </a>
+
+      {/* Phones: one menu pane that opens a column of panes. A <details>, so it works without JavaScript. */}
+      <details class="menu" data-menu>
+        <summary class="pane pane--link menu__btn" data-seq style="--i:1">
+          <Icon name="window" class="menu__icon menu__icon--open" />
+          <Icon name="close" class="menu__icon menu__icon--close" />
+          <span class="label menu__word menu__word--open">Menu</span>
+          <span class="label menu__word menu__word--close">Close</span>
+        </summary>
+        <nav class="menu__panel" aria-label="Sections" data-nav>
+          {
+            nav.map((n, i) => (
+              <a class="pane pane--link navpane" href={n.href} style={`--i:${i}`}>
+                <span class="label">{n.label}</span>
+                <Icon name="arrow" />
+              </a>
+            ))
+          }
+          <a class="pane pane--cobalt pane--link navpane navpane--cta" href={ig.url} style={`--i:${nav.length}`}>
+            <span class="label">Message me on Instagram</span>
+            <Icon name="instagram" />
+          </a>
+        </nav>
+      </details>
+
+      {/* Desktop: the wall's left bay, a column of navigation panes that stays in view. */}
+      <nav class="rail__nav" aria-label="Sections" data-nav>
+        {
+          nav.map((n, i) => (
+            <a class="pane pane--link navpane" href={n.href} data-seq style={`--i:${i + 1}`}>
+              <span class="label">{n.label}</span>
+            </a>
+          ))
+        }
+      </nav>
+      {/* Rests as clear glass while the first bay's cobalt pane is on screen; lights cobalt after. */}
+      <a class="pane pane--link cta rail__cta" href={ig.url} data-seq data-rail-cta style="--i:5">
+        <span class="cta__main disp">Message me <span class="cta__br">on Instagram</span></span>
+        <span class="cta__sub"><Icon name="instagram" size={20} />{ig.display}</span>
+        <Icon name="arrow" class="cta__arrow" />
+      </a>
+    </header>
+
+    <main class="body" id="main">
+      {/* ---------- First bay: the offer, the action, and the five sites ---------- */}
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__transom" aria-hidden="true">
+          <div class="pane hero__tr1" data-seq style="--i:1"></div>
+          <div class="pane hero__tr2" data-seq style="--i:2"></div>
+        </div>
+        <div class="pane hero__head" data-seq style="--i:3">
+          <h1 id="hero-title" class="disp" data-lines>
+            {headline.map((w) => <><span class="w">{w}</span>{' '}</>)}
+          </h1>
+          {/* Number the headline's lines before the first paint, so each line clears in turn. */}
+          <script is:inline>
+            (function () {
+              var h = document.querySelector('[data-lines]');
+              if (!h) return;
+              function group() {
+                var ws = h.querySelectorAll('.w'), top = null, line = -1;
+                for (var i = 0; i < ws.length; i++) {
+                  var t = ws[i].offsetTop;
+                  if (top === null || t > top + 4) { line++; top = t; }
+                  ws[i].style.setProperty('--l', line);
+                }
+              }
+              group();
+              if (document.fonts && document.fonts.ready) document.fonts.ready.then(group);
+              window.addEventListener('resize', group);
+            })();
+          </script>
+        </div>
+        <div class="pane hero__intro" data-seq style="--i:4">
+          <p>You bring the design. I build it into a site that looks the way it was drawn, and works on a phone as well as a laptop.</p>
+        </div>
+        <div class="pane pane--cobalt hero__col" aria-hidden="true" data-seq style="--i:4"></div>
+        <a class="pane pane--cobalt pane--link cta hero__cta" href={ig.url} data-seq style="--i:5">
+          <span class="cta__main disp">Message me on Instagram</span>
+          <span class="cta__sub"><Icon name="instagram" size={20} />{ig.display}</span>
+          <Icon name="arrow" class="cta__arrow" />
+        </a>
+
+        {/* Wide screens: the wall's right bay is the map of the work, one pane per live site. */}
+        <nav class="hero__index index" aria-labelledby="index-title">
+          <p class="pane index__head label" id="index-title" data-seq style="--i:6">Five live sites</p>
+          <ol class="index__list">
+            {
+              work.map((e, n) => (
+                <li class:list={['index__item', n === 0 && 'index__item--feat']} style={`--n:${n}`}>
+                  <a class="index__link" href={`#${e.id}`}>
+                    <span class="pane pane--shot index__shot">
+                      <Shot
+                        src={e.data.desktop!}
+                        alt=""
+                        widths={n === 0 ? [480, 720, 960] : [240, 360, 480]}
+                        sizes={n === 0 ? '34vw' : '17vw'}
+                        seed={n === 0 ? 320 : 240}
+                      />
+                    </span>
+                    <span class="pane index__name" data-seq style={`--i:${7 + n}`}>
+                      <span class="index__title disp">{e.data.title}</span>
+                      <span class="label index__type">{e.data.type}</span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </section>
+
+      {/* ---------- The work: one bay per live site ---------- */}
+      <section class="sect work" id="work" aria-labelledby="work-title">
+        <div class="pane sect__head" data-seq style="--i:6">
+          <h2 id="work-title" class="disp">Live sites I built</h2>
+          <p>
+            {words[shopify][0].toUpperCase() + words[shopify].slice(1)} Shopify stores and {words[wordpress]} WordPress sites, each
+            shown on a laptop and on a phone.
+          </p>
+        </div>
+
+        {
+          work.map((e, n) => {
+            const p = e.data;
+            return (
+              <article class="bay" id={e.id} data-focus aria-labelledby={`${e.id}-title`}>
+                <div class="pane bay__title">
+                  <h3 id={`${e.id}-title`} class="disp">{p.title}</h3>
+                  <p class="label">{p.type}</p>
+                </div>
+                <p class="pane bay__sum">{p.summary}</p>
+                <a class="pane pane--link bay__visit" href={p.live} target="_blank" rel="noopener">
+                  <span class="bay__visit-text">
+                    <span class="label">See it live</span>
+                    <span class="bay__host">{host(p.live)}</span>
+                  </span>
+                  <span class="sr-only">(opens in a new tab)</span>
+                  <Icon name="external" />
+                </a>
+                <figure class="pane pane--shot bay__desk">
+                  <Shot
+                    src={p.desktop!}
+                    alt={`${p.title} on a laptop screen`}
+                    widths={[480, 720, 960, 1200, 1440]}
+                    sizes="(min-width: 1024px) 48vw, (min-width: 768px) 76vw, 96vw"
+                    eager={n === 0}
+                    seed={320}
+                  />
+                </figure>
+                <figure class="pane pane--shot bay__phone">
+                  <Shot
+                    src={p.phone!}
+                    alt={`${p.title} on a phone`}
+                    widths={[180, 260, 390, 520, 780]}
+                    sizes="(min-width: 1024px) 13vw, (min-width: 768px) 21vw, 43vw"
+                    seed={160}
+                  />
+                </figure>
+              </article>
+            );
+          })
+        }
+      </section>
+
+      {/* ---------- What I build ---------- */}
+      <section class="sect services" id="services" aria-labelledby="services-title">
+        <div class="pane sect__head">
+          <h2 id="services-title" class="disp">What I build</h2>
+        </div>
+        {
+          site.services.map((s, i) => (
+            <article class:list={['pane svc', i === 0 && 'svc--lead']}>
+              <h3 class="disp">{s.name}</h3>
+              <p class="svc__sum">{s.summary}</p>
+              <ul class="svc__items" aria-label={`${s.name}: what you get`}>
+                {s.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </section>
+
+      {/* ---------- How I work ---------- */}
+      <section class="sect process" id="process" aria-labelledby="process-title">
+        <div class="pane sect__head">
+          <h2 id="process-title" class="disp">How I work</h2>
+        </div>
+        <ol class="steps">
+          {
+            site.process.map((s) => (
+              <li class="pane step">
+                <h3 class="disp">{s.name}</h3>
+                <p>{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      {/* ---------- About ---------- */}
+      <section class="sect about" id="about" aria-labelledby="about-title">
+        <figure class="pane pane--shot about__photo">
+          <Shot
+            seed={360}
+            src={photo}
+            alt="Swathi, standing on a terrace"
+            widths={[360, 540, 720, 960]}
+            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 44vw, 96vw"
+            pos="50% 30%"
+          />
+        </figure>
+        <div class="pane about__head">
+          <h2 id="about-title" class="disp">{site.about.heading}</h2>
+        </div>
+        <div class="pane about__text">
+          {site.about.paragraphs.map((t) => <p>{t}</p>)}
+        </div>
+        <ul class="about__tools" aria-label="Tools I build with">
+          {site.about.tools.map((t) => <li class="pane about__tool label">{t}</li>)}
+        </ul>
+      </section>
+
+      {/* ---------- The close ---------- */}
+      <section class="sect close" id="contact" aria-labelledby="contact-title">
+        <div class="pane pane--oxblood close__ask">
+          <h2 id="contact-title" class="disp">{site.contact.heading}</h2>
+          <p>{site.contact.text}</p>
+        </div>
+        <a class="pane pane--cobalt pane--link cta close__cta" href={ig.url}>
+          <span class="cta__main disp">Message me on Instagram</span>
+          <span class="cta__sub"><Icon name="instagram" size={20} />{ig.display}</span>
+          <Icon name="arrow" class="cta__arrow" />
+        </a>
+      </section>
+    </main>
+
+    <footer class="sill">
+      <p class="pane sill__name">
+        <span class="disp sill__word">Swathi</span>
+        <span class="label">{site.role}</span>
+      </p>
+      <a class="pane pane--link sill__link" href={ig.url}>
+        <span class="label">Instagram</span>
+        <Icon name="instagram" />
+      </a>
+      <a class="pane pane--link sill__link" href="#top">
+        <span class="label">Back to top</span>
+        <Icon name="up" />
+      </a>
+    </footer>
+  </div>
+</GlassLayout>

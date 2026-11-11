@@ -1,0 +1,45 @@
+---
+// The Glass version's few icons, drawn in one square-capped stroke to match the glazing bars.
+interface Props {
+  name: 'arrow' | 'external' | 'up' | 'window' | 'close' | 'instagram';
+  class?: string;
+  size?: number;
+}
+const { name, class: cls, size = 24 } = Astro.props;
+---
+
+<svg
+  class:list={['icon', cls]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+  aria-hidden="true"
+  focusable="false"
+>
+  {name === 'arrow' && <path d="M4 12h15M13.5 6.5 19 12l-5.5 5.5" />}
+  {name === 'external' && <path d="M7 17 16.5 7.5M9 7h8v8" />}
+  {name === 'up' && <path d="M12 19.5V5M6.5 10.5 12 5l5.5 5.5" />}
+  {
+    name === 'window' && (
+      <>
+        <rect x="4" y="4" width="16" height="16" />
+        <path d="M12 4v16M4 12h16" />
+      </>
+    )
+  }
+  {name === 'close' && <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />}
+  {
+    name === 'instagram' && (
+      <>
+        <rect x="4" y="4" width="16" height="16" rx="4.5" />
+        <circle cx="12" cy="12" r="3.6" />
+        <path d="M16.7 7.3h.01" stroke-width="2.4" stroke-linecap="round" />
+      </>
+    )
+  }
+</svg>

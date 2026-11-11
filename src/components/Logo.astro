@@ -1,0 +1,93 @@
+---
+// Swathi's logo, inlined so its parts can move. Made from Schibsted Grotesk by brand tooling (see README → Logo).
+// Intro: the whole word appears selected (a blue outline around it), the letters rise into the box,
+// then the selection collapses into the i's dot, which fills blue. Plays once per page load.
+import svg from '../assets/logo-inline.svg?raw';
+
+interface Props {
+  intro?: boolean;
+}
+const { intro = false } = Astro.props;
+---
+
+<span class:list={['logo-wrap', { 'logo--intro': intro }]} set:html={svg} />
+
+<style>
+  .logo-wrap {
+    display: block;
+    line-height: 0;
+  }
+  .logo-wrap :global(.logo) {
+    display: block;
+    height: 26px;
+    width: auto;
+    overflow: hidden; /* letters rise from below the baseline, hidden until they arrive */
+  }
+  .logo-wrap :global(.logo__l) {
+    fill: currentColor;
+    transform-box: fill-box;
+  }
+  .logo-wrap :global(.logo__dot) {
+    fill: var(--select);
+    stroke: var(--select);
+    stroke-width: 1.5;
+    stroke-opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: translate 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Hover: the dot lifts a little, like a handle being picked up. */
+  @media (hover: hover) {
+    :global(a:hover) > .logo-wrap :global(.logo__dot) {
+      translate: 0 -40%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .logo--intro :global(.logo__l) {
+      animation: logo-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+      animation-delay: calc(160ms + var(--i) * 45ms);
+    }
+    .logo--intro :global(.logo__dot) {
+      animation: logo-select 1150ms linear backwards;
+    }
+  }
+
+  @keyframes logo-rise {
+    from {
+      transform: translateY(118%);
+    }
+  }
+
+  /* The dot starts as a selection box around the whole word, holds while the letters arrive,
+     then snaps down into place and fills. */
+  @keyframes logo-select {
+    0% {
+      transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy));
+      fill-opacity: 0;
+      stroke-opacity: 0;
+      animation-timing-function: ease-out;
+    }
+    12% {
+      transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy));
+      fill-opacity: 0;
+      stroke-opacity: 1;
+    }
+    60% {
+      transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy));
+      fill-opacity: 0;
+      stroke-opacity: 1;
+      animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+    }
+    90% {
+      fill-opacity: 0.15;
+      stroke-opacity: 1;
+    }
+    100% {
+      transform: none;
+      fill-opacity: 1;
+      stroke-opacity: 0;
+    }
+  }
+</style>

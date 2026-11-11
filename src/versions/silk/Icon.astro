@@ -1,0 +1,23 @@
+---
+// The few drawn icons the page needs, in one stroke weight. Never a Unicode stand-in.
+interface Props {
+  name: 'instagram' | 'out';
+  class?: string;
+}
+const { name, class: cls = '' } = Astro.props;
+---
+
+{
+  name === 'instagram' ? (
+    <svg class={`icon ${cls}`} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="0.9" class="icon__fill" />
+    </svg>
+  ) : (
+    <svg class={`icon ${cls}`} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <path d="M8 6.5h9.5V16" />
+      <path d="M17.5 6.5 6.5 17.5" />
+    </svg>
+  )
+}
